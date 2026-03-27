@@ -19,16 +19,21 @@ interface PlaylistState {
   currentCredentials: XtreamCredentials | null;
   status: Record<ItemCategory, CategoryStatus>;
   
+  // Persistência de Usuário
+  favorites: string[];
+  recentlyViewed: string[];
+  
   loadPlaylist: (url: string, forceRefresh?: boolean) => Promise<boolean>;
   loginXtream: (creds: XtreamCredentials, forceRefresh?: boolean) => Promise<boolean>;
   fetchCategory: (category: ItemCategory, forceRefresh?: boolean) => Promise<void>;
-  getChannels: () => PlaylistItem[];
-  getMovies: () => PlaylistItem[];
-  getSeries: () => PlaylistItem[];
+  
+  // Ações
+  toggleFavorite: (itemId: string) => void;
+  recordWatch: (itemId: string) => void;
+  
   clearCache: () => void;
 }
 
-// Custom storage usando IndexedDB compatível com as tipos do Zustand
 const idbStorage: PersistStorage<PlaylistState> = {
   getItem: async (name) => {
     const value = await idbGet<string>(name);
@@ -42,7 +47,6 @@ const idbStorage: PersistStorage<PlaylistState> = {
   },
 };
 
-// Helper para garantir unicidade global de itens
 const deduplicate = (items: PlaylistItem[]) => {
   const map = new Map<string, PlaylistItem>();
   items.forEach(item => {
@@ -67,16 +71,32 @@ export const usePlaylistStore = create<PlaylistState>()(
         MOVIE: { isLoading: false, error: null },
         SERIES: { isLoading: false, error: null },
       },
+      
+      favorites: [],
+      recentlyViewed: [],
+
+      toggleFavorite: (itemId) => {
+        set((state) => ({
+          favorites: state.favorites.includes(itemId)
+            ? state.favorites.filter((id) => id !== itemId)
+            : [...state.favorites, itemId],
+        }));
+      },
+
+      recordWatch: (itemId) => {
+        set((state) => {
+          const newRecent = [itemId, ...state.recentlyViewed.filter((id) => id !== itemId)].slice(0, 30);
+          return { recentlyViewed: newRecent };
+        });
+      },
 
       loadPlaylist: async (url: string, forceRefresh = false) => {
         const state = get();
         if (!forceRefresh && state.items.length > 0 && state.currentSource === url && state.lastUpdated && (Date.now() - state.lastUpdated < CACHE_VALIDITY)) {
-          // Mesmo no cache, garantimos que não há duplicatas
           set({ items: deduplicate(state.items) });
           return true;
         }
 
-        // Limpa itens se a fonte for diferente
         if (state.currentSource !== url) {
           set({ items: [], status: {
             CHANNEL: { isLoading: false, error: null },
@@ -110,7 +130,6 @@ export const usePlaylistStore = create<PlaylistState>()(
         const sourceKey = `${creds.url}|${creds.username}`;
 
         if (!forceRefresh && state.items.length > 0 && state.currentSource === sourceKey && state.lastUpdated && (Date.now() - state.lastUpdated < CACHE_VALIDITY)) {
-          // Limpa cache antes de disparar as categorias
           set({ items: deduplicate(state.items) });
           get().fetchCategory('CHANNEL', false);
           get().fetchCategory('MOVIE', false);
@@ -150,7 +169,6 @@ export const usePlaylistStore = create<PlaylistState>()(
 
         const hasItems = state.items.some(i => i.category === category);
         if (!forceRefresh && hasItems && state.lastUpdated && (Date.now() - state.lastUpdated < CACHE_VALIDITY)) {
-          // Garante que a lista atual está limpa mesmo vindo do cache
           set({ items: deduplicate(state.items) });
           return;
         }
@@ -173,26 +191,13 @@ export const usePlaylistStore = create<PlaylistState>()(
         }
       },
 
-      getChannels: () => {
-        const { items } = get();
-        return items.filter(item => item.category === 'CHANNEL');
-      },
-      getMovies: () => {
-        const { items } = get();
-        return items.filter(item => item.category === 'MOVIE');
-      },
-      getSeries: () => {
-        const { items } = get();
-        return items.filter(item => item.category === 'SERIES');
-      },
-      clearCache: () => set({ items: [], lastUpdated: null, currentSource: null, currentCredentials: null })
+      clearCache: () => set({ items: [], lastUpdated: null, currentSource: null, currentCredentials: null, favorites: [], recentlyViewed: [] })
     }),
     {
       name: 'iptv-content-cache',
       storage: idbStorage,
       onRehydrateStorage: () => (state) => {
         if (state) {
-          // Limpa o estado hidratado para garantir que não existam duplicatas vindas do disco
           state.items = deduplicate(state.items || []);
         }
       },
@@ -200,8 +205,10 @@ export const usePlaylistStore = create<PlaylistState>()(
         items: state.items, 
         lastUpdated: state.lastUpdated, 
         currentSource: state.currentSource,
-        currentCredentials: state.currentCredentials
-      } as PlaylistState),
+        currentCredentials: state.currentCredentials,
+        favorites: state.favorites,
+        recentlyViewed: state.recentlyViewed
+      } as any),
     }
   )
 );

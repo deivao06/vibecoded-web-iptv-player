@@ -21,6 +21,28 @@ export default defineConfig({
               return;
             }
 
+            // SSRF Protection: Prevent localhost, 127.0.0.1 and private IPs
+            try {
+              const parsedUrl = new URL(targetUrl);
+              const hostname = parsedUrl.hostname.toLowerCase();
+              const isPrivate = hostname === 'localhost' || 
+                                hostname === '127.0.0.1' || 
+                                hostname === '0.0.0.0' || 
+                                hostname.startsWith('192.168.') || 
+                                hostname.startsWith('10.') || 
+                                hostname.startsWith('172.16.');
+
+              if (isPrivate) {
+                res.statusCode = 403;
+                res.end('Forbidden: Private network access not allowed');
+                return;
+              }
+            } catch {
+              res.statusCode = 400;
+              res.end('Invalid URL');
+              return;
+            }
+
             try {
               const controller = new AbortController();
               const timeoutId = setTimeout(() => controller.abort(), 180000); // 3 minutes timeout

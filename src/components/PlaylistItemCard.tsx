@@ -1,6 +1,7 @@
 import React from 'react';
-import { Play, Film, Tv } from 'lucide-react';
+import { Play, Film, Tv, Heart } from 'lucide-react';
 import type { PlaylistItem } from '../types/playlist';
+import { usePlaylistStore } from '../store/usePlaylistStore';
 
 interface PlaylistItemCardProps {
   item: PlaylistItem;
@@ -8,6 +9,14 @@ interface PlaylistItemCardProps {
 }
 
 export const PlaylistItemCard: React.FC<PlaylistItemCardProps> = ({ item, onPlay }) => {
+  const { toggleFavorite, favorites } = usePlaylistStore();
+  const isFavorite = favorites.includes(item.id);
+
+  const handleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(item.id);
+  };
+
   return (
     <div 
       className="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-blue-500 transition-all cursor-pointer shadow-lg hover:shadow-blue-500/10"
@@ -32,6 +41,16 @@ export const PlaylistItemCard: React.FC<PlaylistItemCardProps> = ({ item, onPlay
           </div>
         )}
         
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavorite}
+          className={`absolute top-2 right-2 p-2 rounded-full backdrop-blur-md transition-all z-10 ${
+            isFavorite ? 'bg-red-500 text-white' : 'bg-black/40 text-gray-300 hover:bg-black/60'
+          }`}
+        >
+          <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+        </button>
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
           <div className="bg-blue-600 p-4 rounded-full shadow-2xl transform scale-50 group-hover:scale-100 transition-transform duration-300">
             <Play className="text-white fill-current ml-0.5" size={28} />

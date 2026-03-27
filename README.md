@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# vibecoded-web-iptv-player
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A vibe-coded web iptv player using Gemini-CLI.
 
-Currently, two official plugins are available:
+## Overview
+This is a modern, responsive Web IPTV Player built with React, TypeScript, and TailwindCSS. It supports both M3U playlists and Xtream Codes API, allowing users to watch live channels, movies, and series directly in their browser. The project was developed with a focus on clean code and performance, utilizing Gemini-CLI for rapid prototyping and implementation.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
+- Support for M3U Playlists and Xtream Codes API.
+- Organized library: Live Channels, VOD Movies, and Series.
+- Detailed Series View: Season and episode selection with plot information.
+- Favorites System: Save your most-watched content.
+- History: Quickly access recently viewed items.
+- Advanced Search: Filter content by name or group.
+- Custom Pagination: Choose between 6, 12, 24, 48, or 96 items per page.
+- Responsive Design: Fully compatible with desktop and mobile devices.
+- Multi-language Support: Native support for Portuguese and English.
+- Optimized Scroll: Independent scrolling for item lists with fixed pagination controls.
+- Local Persistence: Saved playlists and preferences are stored locally.
 
-## React Compiler
+## Tech Stack
+- React 19
+- TypeScript
+- TailwindCSS 4
+- Vite
+- Zustand (State Management)
+- Lucide React (Icons)
+- HLS.js and MPEGTS.js (Video Streaming)
+- Docker and Docker Compose
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
+- Node.js (v22 or higher recommended)
+- Docker and Docker Compose (optional, for containerized deployment)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Local Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/vibecoded-web-iptv-player.git
+   cd vibecoded-web-iptv-player
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+4. Build for production:
+   ```bash
+   npm run build
+   ```
+
+### Docker Deployment
+You can run the application using Docker Compose:
+```bash
+docker-compose up -d
 ```
+The application will be available at http://localhost:3000 by default.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development Context
+This project was developed using Gemini-CLI, an AI-powered interactive CLI agent. The development process followed high-signal engineering standards, prioritizing technical integrity, responsive aesthetics, and maintainable abstractions.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## License
+This project is open-source and available under the MIT License.

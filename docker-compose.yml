@@ -3,6 +3,7 @@ services:
     build:
       context: .
       target: development
+    container_name: iptv-player-dev
     volumes:
       - .:/app
       - /app/node_modules

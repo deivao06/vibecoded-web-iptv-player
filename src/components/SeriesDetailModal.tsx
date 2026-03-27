@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Play, Info, Calendar, Star, List, ChevronDown } from 'lucide-react';
 import { XtreamService } from '../services/XtreamService';
+import { useLanguageStore } from '../store/useLanguageStore';
 import type { PlaylistItem, SeriesDetail, Episode, XtreamCredentials } from '../types/playlist';
 
 interface SeriesDetailModalProps {
@@ -16,6 +17,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
   const [error, setError] = useState<string | null>(null);
   const [activeSeason, setActiveSeason] = useState<number>(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { t } = useLanguageStore();
 
   // Trava o scroll do body ao abrir o modal
   useEffect(() => {
@@ -42,7 +44,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
       const id = series.seriesId || series.streamId || series.id.replace('series-', '');
       
       if (!id) {
-        setError('ID da série não encontrado.');
+        setError('ID not found');
         setLoading(false);
         return;
       }
@@ -54,7 +56,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
           setActiveSeason(data.seasons[0].number);
         }
       } catch (err) {
-        setError('Falha ao carregar detalhes da série.');
+        setError('Failed to load series details');
       } finally {
         setLoading(false);
       }
@@ -68,7 +70,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-400 font-medium">Carregando detalhes...</p>
+          <p className="text-gray-400 font-medium">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -79,9 +81,9 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
         <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800 text-center max-w-md w-full shadow-2xl">
           <X className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-xl font-bold mb-2">Erro</h3>
-          <p className="text-gray-400 mb-6">{error || 'Série não encontrada'}</p>
-          <button onClick={onClose} className="w-full px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition-all font-semibold">Fechar</button>
+          <h3 className="text-xl font-bold mb-2">{t.common.errorTitle}</h3>
+          <p className="text-gray-400 mb-6">{error || 'Series not found'}</p>
+          <button onClick={onClose} className="w-full px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition-all font-semibold">{t.player.close}</button>
         </div>
       </div>
     );
@@ -135,21 +137,21 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-gray-400">
                   <Info size={16} />
-                  <span className="text-xs font-bold uppercase tracking-widest">Sinopse</span>
+                  <span className="text-xs font-bold uppercase tracking-widest">{t.series.synopsis}</span>
                 </div>
-                <p className="text-sm text-gray-400 leading-relaxed">{detail.info.plot || 'Nenhuma sinopse disponível.'}</p>
+                <p className="text-sm text-gray-400 leading-relaxed">{detail.info.plot || t.series.noSynopsis}</p>
               </div>
               
               {detail.info.cast && (
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">Elenco</span>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">{t.series.cast}</span>
                   <p className="text-xs text-gray-400 leading-snug">{detail.info.cast}</p>
                 </div>
               )}
 
               {detail.info.director && (
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">Diretor</span>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block">{t.series.director}</span>
                   <p className="text-xs text-gray-400">{detail.info.director}</p>
                 </div>
               )}
@@ -163,7 +165,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
           <div className="p-4 md:p-6 bg-gray-900/50 border-b border-gray-800 shrink-0 flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex items-center gap-2 text-gray-400">
               <List size={20} className="text-blue-500" />
-              <span className="text-sm font-bold uppercase tracking-widest">Temporadas</span>
+              <span className="text-sm font-bold uppercase tracking-widest">{t.series.seasons}</span>
             </div>
             
             <div className="relative flex-1 max-w-sm season-dropdown">
@@ -172,7 +174,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                 className={`w-full bg-gray-800/80 hover:bg-gray-800 border ${isDropdownOpen ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-gray-700'} text-white text-sm font-bold rounded-xl pl-4 pr-10 py-3.5 flex items-center justify-between transition-all shadow-lg shadow-black/20`}
               >
                 <span>
-                  Temporada {activeSeason} • {currentSeason?.episodes.length || 0} episódios
+                  {t.series.season} {activeSeason} • {currentSeason?.episodes.length || 0} {t.series.episodes}
                 </span>
                 <ChevronDown 
                   size={20} 
@@ -198,11 +200,11 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <span className="font-bold">Temporada {season.number}</span>
+                          <span className="font-bold">{t.series.season} {season.number}</span>
                           <span className={`text-[10px] uppercase font-black px-1.5 py-0.5 rounded ${
                             activeSeason === season.number ? 'bg-white/20' : 'bg-gray-900 text-gray-500'
                           }`}>
-                            {season.episodes.length} eps
+                            {season.episodes.length} {t.series.eps}
                           </span>
                         </div>
                         {activeSeason === season.number && (
@@ -249,7 +251,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                     {ep.info?.plot ? (
                       <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed italic">{ep.info.plot}</p>
                     ) : (
-                      <p className="text-xs text-gray-500">Episódio {ep.episodeNumber} da Temporada {activeSeason}.</p>
+                      <p className="text-xs text-gray-500">{t.series.episode} {ep.episodeNumber} {t.common.of} {t.series.season} {activeSeason}.</p>
                     )}
                     
                     {ep.info?.duration && (
@@ -265,7 +267,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                 <div className="p-6 bg-gray-800/30 rounded-full mb-4">
                   <List size={48} className="opacity-20" />
                 </div>
-                <p className="font-medium">Nenhum episódio encontrado.</p>
+                <p className="font-medium">{t.series.noEpisodes}</p>
               </div>
             )}
           </div>
