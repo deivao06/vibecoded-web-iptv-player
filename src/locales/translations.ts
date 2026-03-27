@@ -20,8 +20,8 @@ export const translations = {
       password: 'Senha',
       connectToStart: 'Conecte-se para começar',
       chooseMethod: 'Escolha o método acima e insira suas credenciais.',
-      version: 'IPTV Web Player v1.0',
-      footer: 'IPTV Web Player — M3U & Xtream Codes API'
+      version: 'Senju Player v1.0',
+      footer: 'Senju Player — M3U & Xtream Codes API'
     },
     menu: {
       library: 'Biblioteca',
@@ -80,8 +80,8 @@ export const translations = {
       password: 'Password',
       connectToStart: 'Connect to start',
       chooseMethod: 'Choose the method above and enter your credentials.',
-      version: 'IPTV Web Player v1.0',
-      footer: 'IPTV Web Player — M3U & Xtream Codes API'
+      version: 'Senju Player v1.0',
+      footer: 'Senju Player — M3U & Xtream Codes API'
     },
     menu: {
       library: 'Library',
