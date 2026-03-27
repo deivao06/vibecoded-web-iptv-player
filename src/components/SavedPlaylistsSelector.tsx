@@ -25,7 +25,7 @@ export function SavedPlaylistsSelector() {
   return (
     <div className="relative group">
       <div className="flex items-center gap-2 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:bg-gray-700 transition-all min-w-[180px]">
-        <Database size={16} className="text-blue-400" />
+        <Database size={16} className="text-senju-light" />
         <div className="flex-1 text-sm font-medium truncate">
           {activePlaylist ? activePlaylist.name : t.playlists.yourLists}
         </div>
@@ -41,7 +41,7 @@ export function SavedPlaylistsSelector() {
             <div 
               key={playlist.id}
               className={`flex items-center group/item p-2 rounded-lg transition-colors mb-1 ${
-                activePlaylistId === playlist.id ? 'bg-blue-600/20 text-blue-400' : 'hover:bg-gray-800 text-gray-400'
+                activePlaylistId === playlist.id ? 'bg-senju-dark/40 text-senju-light' : 'hover:bg-gray-800 text-gray-400'
               }`}
             >
               <button 

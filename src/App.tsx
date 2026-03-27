@@ -6,7 +6,8 @@ import { PlaylistItemCard } from './components/PlaylistItemCard';
 import { VideoPlayer } from './components/VideoPlayer';
 import { SeriesDetailModal } from './components/SeriesDetailModal';
 import { SavedPlaylistsSelector } from './components/SavedPlaylistsSelector';
-import { Search, List, Film, Tv, Play, Loader2, Link as LinkIcon, AlertCircle, User, Lock, Globe, Save, ChevronLeft, ChevronRight, RefreshCw, Clock, LayoutGrid, Heart, History, ChevronDown } from 'lucide-react';
+import { Logo } from './components/Logo';
+import { Search, List, Film, Tv, Loader2, Link as LinkIcon, AlertCircle, User, Lock, Globe, Save, ChevronLeft, ChevronRight, RefreshCw, Clock, LayoutGrid, Heart, History, ChevronDown } from 'lucide-react';
 import type { PlaylistItem, ItemCategory } from './types/playlist';
 
 type LoginMode = 'M3U' | 'XTREAM';
@@ -150,15 +151,18 @@ function App() {
   const tabError = ['CHANNEL', 'MOVIE', 'SERIES'].includes(activeTab) ? status[activeTab as ItemCategory]?.error : null;
 
   return (
-    <div className="h-screen bg-gray-950 text-gray-100 flex flex-col w-full font-sans selection:bg-blue-500/30 overflow-hidden">
+    <div className="h-screen bg-gray-950 text-gray-100 flex flex-col w-full font-sans selection:bg-senju-light/30 overflow-hidden">
       <header className="bg-gray-900 border-b border-gray-800 p-4 z-30 shadow-xl shrink-0">
         <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row items-center gap-6">
           <div className="flex items-center gap-4 mr-auto">
             <div className="flex items-center gap-2">
-              <div className="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-900/20">
-                <Play className="text-white fill-current" size={24} />
+              <div className="bg-senju-dark p-1.5 rounded-xl shadow-lg shadow-senju-dark/20 border border-senju-light/20">
+                <Logo size={32} />
               </div>
-              <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent hidden sm:block">IPTV Player</h1>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-black tracking-tighter bg-gradient-to-br from-senju-light to-senju-accent bg-clip-text text-transparent hidden sm:block leading-none uppercase">Senju Player</h1>
+                <span className="text-[9px] font-bold text-senju-light/50 uppercase tracking-[0.2em] leading-none mt-1 hidden sm:block">{t.common.slogan}</span>
+              </div>
             </div>
             <div className="h-8 w-px bg-gray-800 mx-2 hidden lg:block" />
             <div className="flex items-center gap-2">
@@ -175,8 +179,8 @@ function App() {
                 
                 {isLangOpen && (
                   <div className="absolute top-full left-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50 p-1">
-                    <button onClick={() => { setLanguage('pt'); setIsLangOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all ${language === 'pt' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>Português</button>
-                    <button onClick={() => { setLanguage('en'); setIsLangOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all ${language === 'en' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-700'}`}>English</button>
+                    <button onClick={() => { setLanguage('pt'); setIsLangOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all ${language === 'pt' ? 'bg-senju-dark text-senju-light' : 'text-gray-400 hover:bg-gray-700'}`}>Português</button>
+                    <button onClick={() => { setLanguage('en'); setIsLangOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-xs font-bold transition-all ${language === 'en' ? 'bg-senju-dark text-senju-light' : 'text-gray-400 hover:bg-gray-700'}`}>English</button>
                   </div>
                 )}
               </div>
@@ -190,22 +194,22 @@ function App() {
             </div>
 
             <form onSubmit={loginMode === 'M3U' ? handleM3ULoad : handleXtreamLogin} className="flex flex-wrap sm:flex-nowrap w-full sm:w-auto gap-2">
-              <input type="text" value={listName} onChange={(e) => setListName(e.target.value)} placeholder={t.common.saveName} className="flex-1 sm:w-32 px-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              <input type="text" value={listName} onChange={(e) => setListName(e.target.value)} placeholder={t.common.saveName} className="flex-1 sm:w-32 px-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-senju-light outline-none" />
               
               {loginMode === 'M3U' ? (
                 <div className="relative flex-1 sm:w-64">
                   <LinkIcon className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                  <input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder={t.common.m3uUrl} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required />
+                  <input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder={t.common.m3uUrl} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-senju-light outline-none" required />
                 </div>
               ) : (
                 <>
-                  <div className="relative flex-1 min-w-[140px]"><Globe className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" /><input type="url" value={xtreamUrl} onChange={(e) => setXtreamUrl(e.target.value)} placeholder={t.common.xtreamServer} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required /></div>
-                  <div className="relative w-1/2 sm:w-28"><User className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" /><input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder={t.common.username} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required /></div>
-                  <div className="relative w-1/2 sm:w-28"><Lock className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" /><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.common.password} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required /></div>
+                  <div className="relative flex-1 min-w-[140px]"><Globe className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" /><input type="url" value={xtreamUrl} onChange={(e) => setXtreamUrl(e.target.value)} placeholder={t.common.xtreamServer} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-senju-light outline-none" required /></div>
+                  <div className="relative w-1/2 sm:w-28"><User className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" /><input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder={t.common.username} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-senju-light outline-none" required /></div>
+                  <div className="relative w-1/2 sm:w-28"><Lock className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" /><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t.common.password} className="w-full pl-9 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-sm focus:ring-2 focus:ring-senju-light outline-none" required /></div>
                 </>
               )}
               
-              <button type="submit" disabled={isLoading} className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+              <button type="submit" disabled={isLoading} className="w-full sm:w-auto px-4 py-2 bg-senju-dark hover:bg-senju-light hover:text-senju-dark disabled:bg-gray-700 text-white text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2">
                 {isLoading ? <Loader2 className="animate-spin" size={16} /> : <><Save size={16} /> {t.common.save}</>}
               </button>
             </form>
@@ -218,10 +222,10 @@ function App() {
           <div>
             <p className="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">{t.menu.library}</p>
             <div className="flex flex-col gap-1">
-              <button onClick={() => setActiveTab('FAVORITE')} className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'FAVORITE' ? 'bg-gray-800 text-red-400' : 'text-gray-400 hover:bg-gray-800/50'}`}>
+              <button onClick={() => setActiveTab('FAVORITE')} className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${activeTab === 'FAVORITE' ? 'bg-gray-800 text-senju-light border border-senju-light/20 shadow-lg shadow-senju-light/5' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}>
                 <Heart size={18} fill={activeTab === 'FAVORITE' ? 'currentColor' : 'none'} /> {t.menu.favorites}
               </button>
-              <button onClick={() => setActiveTab('RECENT')} className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${activeTab === 'RECENT' ? 'bg-gray-800 text-blue-400' : 'text-gray-400 hover:bg-gray-800/50'}`}>
+              <button onClick={() => setActiveTab('RECENT')} className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${activeTab === 'RECENT' ? 'bg-gray-800 text-senju-light border border-senju-light/20 shadow-lg shadow-senju-light/5' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}>
                 <History size={18} /> {t.menu.recent}
               </button>
             </div>
@@ -235,7 +239,7 @@ function App() {
                 { id: 'MOVIE', icon: Film, label: t.menu.movies },
                 { id: 'SERIES', icon: List, label: t.menu.series }
               ].map((tab) => (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id as ViewCategory)} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === tab.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-gray-800/50'}`}>
+                <button key={tab.id} onClick={() => setActiveTab(tab.id as ViewCategory)} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer ${activeTab === tab.id ? 'bg-senju-dark text-senju-light shadow-lg shadow-senju-dark/20 border border-senju-light/10' : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200'}`}>
                   <tab.icon size={18} /> {tab.label}
                 </button>
               ))}
@@ -266,7 +270,7 @@ function App() {
               <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between shrink-0">
                 <div className="relative flex-1 w-full max-w-2xl">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                  <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t.common.search} className="block w-full pl-12 pr-4 py-3 border border-gray-700 rounded-2xl bg-gray-900 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+                  <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t.common.search} className="block w-full pl-12 pr-4 py-3 border border-gray-700 rounded-2xl bg-gray-900 text-white placeholder-gray-500 focus:ring-2 focus:ring-senju-light outline-none transition-all" />
                 </div>
                 
                 <button onClick={handleRefresh} disabled={isLoading} className="p-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-2xl text-gray-400 transition-all shrink-0">
@@ -282,7 +286,7 @@ function App() {
                   { id: 'MOVIE', icon: Film, label: t.menu.movies },
                   { id: 'SERIES', icon: List, label: t.menu.series }
                 ].map((tab) => (
-                  <button key={tab.id} onClick={() => setActiveTab(tab.id as ViewCategory)} className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${activeTab === tab.id ? 'bg-blue-600 text-white' : 'bg-gray-900 text-gray-500 border border-gray-800'}`}>
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id as ViewCategory)} className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${activeTab === tab.id ? 'bg-senju-dark text-senju-light border border-senju-light/20 shadow-lg shadow-senju-light/5' : 'bg-gray-900 text-gray-500 border border-gray-800 hover:text-gray-300 hover:border-gray-700'}`}>
                     <tab.icon size={14} /> {tab.label}
                   </button>
                 ))}
@@ -293,11 +297,11 @@ function App() {
                   <div className="relative items-per-page-dropdown">
                     <button
                       onClick={() => setIsItemsPerPageOpen(!isItemsPerPageOpen)}
-                      className={`flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border ${isItemsPerPageOpen ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-gray-700'} text-gray-200 transition-all cursor-pointer font-medium hover:bg-gray-700`}
+                      className={`flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border ${isItemsPerPageOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-700'} text-gray-200 transition-all cursor-pointer font-medium hover:bg-gray-700`}
                     >
                       <LayoutGrid size={14} className="text-gray-500" />
                       <span>{itemsPerPage} {t.common.perPage}</span>
-                      <ChevronDown size={14} className={`text-blue-500 transition-transform duration-300 ${isItemsPerPageOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown size={14} className={`text-senju-light transition-transform duration-300 ${isItemsPerPageOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {isItemsPerPageOpen && (
@@ -311,7 +315,7 @@ function App() {
                             }}
                             className={`px-3 py-2 rounded-lg cursor-pointer transition-all text-xs font-bold mb-0.5 last:mb-0 ${
                               itemsPerPage === n 
-                                ? 'bg-blue-600 text-white' 
+                                ? 'bg-senju-dark text-senju-light' 
                                 : 'text-gray-400 hover:bg-gray-700 hover:text-white'
                             }`}
                           >
@@ -328,7 +332,7 @@ function App() {
 
               {isCurrentlyLoading ? (
                 <div className="flex-1 flex flex-col items-center justify-center space-y-4">
-                  <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+                  <Loader2 className="w-12 h-12 text-senju-light animate-spin" />
                   <p className="text-gray-400 font-medium">{t.common.loading}</p>
                 </div>
               ) : tabError ? (

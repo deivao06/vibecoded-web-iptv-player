@@ -19,7 +19,7 @@ export const PlaylistItemCard: React.FC<PlaylistItemCardProps> = ({ item, onPlay
 
   return (
     <div 
-      className="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-blue-500 transition-all cursor-pointer shadow-lg hover:shadow-blue-500/10"
+      className="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-senju-light transition-all cursor-pointer shadow-lg hover:shadow-senju-light/10"
       onClick={() => onPlay(item)}
     >
       <div className="aspect-[2/3] bg-gray-900 flex items-center justify-center overflow-hidden relative">
@@ -45,27 +45,27 @@ export const PlaylistItemCard: React.FC<PlaylistItemCardProps> = ({ item, onPlay
         <button
           onClick={handleFavorite}
           className={`absolute top-2 right-2 p-2 rounded-full backdrop-blur-md transition-all z-10 ${
-            isFavorite ? 'bg-red-500 text-white' : 'bg-black/40 text-gray-300 hover:bg-black/60'
+            isFavorite ? 'bg-senju-light text-senju-dark' : 'bg-black/40 text-gray-300 hover:bg-senju-dark hover:text-senju-light'
           }`}
         >
           <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
         </button>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-          <div className="bg-blue-600 p-4 rounded-full shadow-2xl transform scale-50 group-hover:scale-100 transition-transform duration-300">
-            <Play className="text-white fill-current ml-0.5" size={28} />
+        <div className="absolute inset-0 bg-gradient-to-t from-senju-dark/90 via-senju-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+          <div className="bg-senju-light p-4 rounded-full shadow-2xl transform scale-50 group-hover:scale-100 transition-transform duration-300">
+            <Play className="text-senju-dark fill-current ml-0.5" size={28} />
           </div>
         </div>
 
         {item.category === 'CHANNEL' && (
-          <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-600 text-[10px] font-black text-white rounded uppercase tracking-wider shadow-lg">
+          <div className="absolute top-2 left-2 px-2 py-0.5 bg-senju-accent text-[10px] font-black text-senju-dark rounded uppercase tracking-wider shadow-lg">
             Live
           </div>
         )}
       </div>
       
       <div className="p-3 bg-gray-900/80 backdrop-blur-sm border-t border-gray-800">
-        <h3 className="text-sm font-bold text-gray-100 truncate leading-tight mb-1" title={item.name}>
+        <h3 className="text-sm font-bold text-gray-100 truncate leading-tight mb-1 group-hover:text-senju-light transition-colors" title={item.name}>
           {item.name}
         </h3>
         {item.groupName && (

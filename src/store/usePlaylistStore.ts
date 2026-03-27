@@ -85,7 +85,7 @@ export const usePlaylistStore = create<PlaylistState>()(
 
       recordWatch: (itemId) => {
         set((state) => {
-          const newRecent = [itemId, ...state.recentlyViewed.filter((id) => id !== itemId)].slice(0, 30);
+          const newRecent = [itemId, ...state.recentlyViewed.filter((id) => id !== itemId)].slice(0, 6);
           return { recentlyViewed: newRecent };
         });
       },

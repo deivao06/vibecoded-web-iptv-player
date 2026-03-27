@@ -69,7 +69,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-senju-light mx-auto mb-4"></div>
           <p className="text-gray-400 font-medium">{t.common.loading}</p>
         </div>
       </div>
@@ -96,7 +96,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
       <div className="bg-gray-900 w-full max-w-7xl h-full max-h-[90vh] rounded-3xl overflow-hidden shadow-2xl border border-gray-800 flex flex-col md:flex-row relative">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 z-30 p-2 bg-black/60 hover:bg-black/90 rounded-full text-white transition-all border border-white/10 shadow-xl"
+          className="absolute top-4 right-4 z-30 p-2 bg-black/60 hover:bg-senju-light rounded-full text-white hover:text-senju-dark transition-all border border-white/10 shadow-xl"
         >
           <X size={24} />
         </button>
@@ -122,12 +122,12 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                 </div>
               )}
               {detail.info.releaseDate && (
-                <div className="flex items-center gap-1 px-2.5 py-1 bg-blue-500/10 text-blue-400 rounded-lg text-xs font-bold border border-blue-500/20">
+                <div className="flex items-center gap-1 px-2.5 py-1 bg-senju-light/10 text-senju-light rounded-lg text-xs font-bold border border-senju-light/20">
                   <Calendar size={12} /> {detail.info.releaseDate}
                 </div>
               )}
               {detail.info.genre && (
-                <div className="px-2.5 py-1 bg-purple-500/10 text-purple-400 rounded-lg text-[10px] font-bold border border-purple-500/20 uppercase tracking-wider">
+                <div className="px-2.5 py-1 bg-senju-dark/30 text-senju-light rounded-lg text-[10px] font-bold border border-senju-light/20 uppercase tracking-wider">
                   {detail.info.genre.split(',')[0]}
                 </div>
               )}
@@ -164,14 +164,14 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
           {/* Season Selector */}
           <div className="p-4 md:p-6 bg-gray-900/50 border-b border-gray-800 shrink-0 flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex items-center gap-2 text-gray-400">
-              <List size={20} className="text-blue-500" />
+              <List size={20} className="text-senju-light" />
               <span className="text-sm font-bold uppercase tracking-widest">{t.series.seasons}</span>
             </div>
             
             <div className="relative flex-1 max-w-sm season-dropdown">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className={`w-full bg-gray-800/80 hover:bg-gray-800 border ${isDropdownOpen ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-gray-700'} text-white text-sm font-bold rounded-xl pl-4 pr-10 py-3.5 flex items-center justify-between transition-all shadow-lg shadow-black/20`}
+                className={`w-full bg-gray-800/80 hover:bg-gray-800 border ${isDropdownOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-700'} text-white text-sm font-bold rounded-xl pl-4 pr-10 py-3.5 flex items-center justify-between transition-all shadow-lg shadow-black/20`}
               >
                 <span>
                   {t.series.season} {activeSeason} • {currentSeason?.episodes.length || 0} {t.series.episodes}
@@ -179,7 +179,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                 <ChevronDown 
                   size={20} 
                   strokeWidth={2.5} 
-                  className={`text-blue-500 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                  className={`text-senju-light transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} 
                 />
               </button>
 
@@ -195,7 +195,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                         }}
                         className={`group flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-all mb-1 last:mb-0 ${
                           activeSeason === season.number 
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' 
+                            ? 'bg-senju-dark text-senju-light shadow-lg shadow-senju-dark/20' 
                             : 'text-gray-400 hover:bg-gray-700 hover:text-white'
                         }`}
                       >
@@ -208,7 +208,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                           </span>
                         </div>
                         {activeSeason === season.number && (
-                          <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                          <div className="w-2 h-2 rounded-full bg-senju-light animate-pulse" />
                         )}
                       </div>
                     ))}
@@ -225,7 +225,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                 <div 
                   key={ep.id}
                   onClick={() => onPlayEpisode(ep)}
-                  className="group flex flex-col sm:flex-row items-stretch gap-4 p-3 bg-gray-800/30 hover:bg-gray-800/60 rounded-2xl border border-gray-800/50 hover:border-blue-500/50 cursor-pointer transition-all"
+                  className="group flex flex-col sm:flex-row items-stretch gap-4 p-3 bg-gray-800/30 hover:bg-gray-800/60 rounded-2xl border border-gray-800/50 hover:border-senju-light/50 cursor-pointer transition-all"
                 >
                   <div className="w-full sm:w-48 aspect-video rounded-xl overflow-hidden bg-gray-950 relative shrink-0 shadow-lg">
                     <img 
@@ -235,18 +235,18 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
                       onError={(e) => (e.target as HTMLImageElement).src = 'https://via.placeholder.com/160x90?text=Sem+Imagem'}
                     />
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                      <div className="bg-blue-600 p-3 rounded-full scale-90 group-hover:scale-100 transition-transform shadow-2xl">
-                        <Play size={18} fill="white" className="text-white ml-0.5" />
+                      <div className="bg-senju-light p-3 rounded-full scale-90 group-hover:scale-100 transition-transform shadow-2xl">
+                        <Play size={18} fill="currentColor" className="text-senju-dark ml-0.5" />
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex-1 min-w-0 py-1 flex flex-col justify-center">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-blue-500 font-mono text-[10px] font-black px-2 py-0.5 bg-blue-500/10 rounded-md border border-blue-500/20 uppercase">
+                      <span className="text-senju-light font-mono text-[10px] font-black px-2 py-0.5 bg-senju-light/10 rounded-md border border-senju-light/20 uppercase">
                         EP {ep.episodeNumber}
                       </span>
-                      <h4 className="text-white font-bold truncate group-hover:text-blue-400 transition-colors text-base">{ep.title}</h4>
+                      <h4 className="text-white font-bold truncate group-hover:text-senju-light transition-colors text-base">{ep.title}</h4>
                     </div>
                     {ep.info?.plot ? (
                       <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed italic">{ep.info.plot}</p>
@@ -277,7 +277,6 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
   );
 };
 
-// Adicionando um pequeno helper para o relógio usado acima
 const Clock = ({ size }: { size: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
 );

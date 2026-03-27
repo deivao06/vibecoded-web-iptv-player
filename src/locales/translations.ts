@@ -1,6 +1,7 @@
 export const translations = {
   pt: {
     common: {
+      slogan: 'Stream com poder',
       search: 'Buscar nesta categoria...',
       loading: 'Sincronizando biblioteca...',
       errorTitle: 'Erro de Conexão',
@@ -60,6 +61,7 @@ export const translations = {
   },
   en: {
     common: {
+      slogan: 'Stream with power',
       search: 'Search in this category...',
       loading: 'Syncing library...',
       errorTitle: 'Connection Error',

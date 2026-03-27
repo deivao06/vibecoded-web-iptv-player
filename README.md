@@ -1,9 +1,9 @@
-# vibecoded-web-iptv-player
+# Senju Player
 
 A vibe-coded web iptv player using Gemini-CLI.
 
 ## Overview
-This is a modern, responsive Web IPTV Player built with React, TypeScript, and TailwindCSS. It supports both M3U playlists and Xtream Codes API, allowing users to watch live channels, movies, and series directly in their browser. The project was developed with a focus on clean code and performance, utilizing Gemini-CLI for rapid prototyping and implementation.
+Senju Player is a modern, responsive Web IPTV Player built with React, TypeScript, and TailwindCSS. It supports both M3U playlists and Xtream Codes API, allowing users to watch live channels, movies, and series directly in their browser. The project was developed with a focus on clean code and performance, utilizing Gemini-CLI for rapid prototyping and implementation.
 
 ## Features
 - Support for M3U Playlists and Xtream Codes API.
