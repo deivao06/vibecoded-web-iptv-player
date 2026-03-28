@@ -155,7 +155,7 @@ function App() {
 
   return (
     <div className="fixed inset-0 bg-gray-950 text-gray-100 flex flex-col w-full font-sans selection:bg-senju-light/30 overflow-hidden">
-      <header className="bg-gray-900 border-b border-gray-800 p-3 lg:p-4 z-40 shadow-xl shrink-0 overflow-y-auto max-h-[80vh]">
+      <header className="bg-gray-900 border-b border-gray-800 p-3 lg:p-4 z-40 shadow-xl shrink-0">
         <div className="max-w-[1900px] mx-auto flex flex-col lg:flex-row items-center gap-3 lg:gap-4">
           {/* Logo Section - Full width on mobile */}
           <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto">
@@ -215,7 +215,7 @@ function App() {
 
         {/* Login Form Panel (Mobile/Desktop Toggle) */}
         {isLoginVisible && (
-          <div className="mt-3 p-4 bg-gray-800/80 backdrop-blur-md rounded-2xl border border-gray-700 animate-in slide-in-from-top duration-300">
+          <div className="mt-3 p-4 bg-gray-800/80 backdrop-blur-md rounded-2xl border border-gray-700 animate-in slide-in-from-top duration-300 overflow-y-auto max-h-[60vh] custom-scrollbar">
             <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row items-center gap-4">
               <div className="flex bg-gray-950 p-1 rounded-lg border border-gray-800 w-full lg:w-auto">
                 <button onClick={() => setLoginMode('M3U')} className={`flex-1 lg:flex-none px-4 py-1.5 rounded-md text-sm font-medium transition-all ${loginMode === 'M3U' ? 'bg-gray-800 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}>M3U</button>
@@ -223,7 +223,7 @@ function App() {
               </div>
 
               <form onSubmit={loginMode === 'M3U' ? handleM3ULoad : handleXtreamLogin} className="flex flex-col lg:flex-row w-full gap-2">
-                <input type="text" value={listName} onChange={(e) => setListName(e.target.value)} placeholder={t.common.saveName} className="w-full lg:w-48 px-3 py-2.5 border border-gray-700 rounded-xl bg-gray-900 text-sm focus:ring-2 focus:ring-senju-light outline-none" />
+                <input type="text" value={listName} onChange={(e) => setListName(e.target.value)} placeholder={t.common.saveName} className="w-full lg:w-48 px-3 py-2.5 border border-gray-700 rounded-xl bg-gray-900 text-sm focus:ring-2 focus:ring-senju-light outline-none" required />
                 
                 {loginMode === 'M3U' ? (
                   <div className="relative flex-1">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Trash2, Database, ChevronDown } from 'lucide-react';
 import { useSavedAccountsStore } from '../store/useSavedAccountsStore';
 import { usePlaylistStore } from '../store/usePlaylistStore';
@@ -58,7 +58,7 @@ export function SavedPlaylistsSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-64 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200 origin-top-right">
+        <div className="absolute top-full left-0 md:left-auto md:right-0 mt-2 w-[calc(100vw-2rem)] sm:w-64 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200 origin-top-left md:origin-top-right">
           <div className="p-2 border-b border-gray-800 bg-gray-900/50">
             <p className="text-[10px] uppercase tracking-wider font-bold text-gray-500 px-2 py-1">{t.playlists.savedLists}</p>
           </div>
