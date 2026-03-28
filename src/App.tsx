@@ -363,7 +363,10 @@ function App() {
                     className={`flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-lg border ${isItemsPerPageOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-800'} text-gray-300 transition-all cursor-pointer font-bold hover:bg-gray-800`}
                   >
                     <LayoutGrid size={14} className="text-gray-600" />
-                    <span className="hidden xs:inline">{itemsPerPage}</span>
+                    <span className="text-[10px] sm:text-xs">
+                      {itemsPerPage} 
+                      <span className="hidden sm:inline ml-1">{t.common.perPage}</span>
+                    </span>
                     <ChevronDown size={14} className={`text-senju-light transition-transform duration-300 ${isItemsPerPageOpen ? 'rotate-180' : ''}`} />
                   </button>
 
