@@ -22,3 +22,4 @@ separados por menus.
 - Sempre teste a build antes de considerar que está funcionando
 - Resolve os problemas de build antes de considerar que está funcionando
 - Só comite e dê push quando o usuário mandar explicitamente
+- Sempre tente buildar após as alterações no código
