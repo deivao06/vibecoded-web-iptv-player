@@ -154,8 +154,8 @@ function App() {
   const tabError = ['CHANNEL', 'MOVIE', 'SERIES'].includes(activeTab) ? status[activeTab as ItemCategory]?.error : null;
 
   return (
-    <div className="h-screen bg-gray-950 text-gray-100 flex flex-col w-full font-sans selection:bg-senju-light/30 overflow-hidden">
-      <header className="bg-gray-900 border-b border-gray-800 p-3 lg:p-4 z-40 shadow-xl shrink-0">
+    <div className="fixed inset-0 bg-gray-950 text-gray-100 flex flex-col w-full font-sans selection:bg-senju-light/30 overflow-hidden">
+      <header className="bg-gray-900 border-b border-gray-800 p-3 lg:p-4 z-40 shadow-xl shrink-0 overflow-y-auto max-h-[80vh]">
         <div className="max-w-[1900px] mx-auto flex flex-col lg:flex-row items-center gap-3 lg:gap-4">
           {/* Logo Section - Full width on mobile */}
           <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto">
