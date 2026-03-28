@@ -345,43 +345,50 @@ function App() {
             </div>
           ) : (
             <>
-              <div className="flex flex-col md:flex-row gap-4 mb-4 lg:mb-8 items-center justify-between shrink-0">
-                <div className="relative flex-1 w-full max-w-2xl">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-                  <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t.common.search} className="block w-full pl-12 pr-4 py-3.5 border border-gray-800 rounded-2xl bg-gray-900 text-white placeholder-gray-600 focus:ring-2 focus:ring-senju-light outline-none transition-all text-sm shadow-inner" />
+              <div className="flex flex-row gap-2 mb-4 lg:mb-8 items-center justify-between shrink-0">
+                <div className="relative flex-1 max-w-2xl">
+                  <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-500" />
+                  <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t.common.search} className="block w-full pl-9 md:pl-12 pr-4 py-2.5 md:py-3.5 border border-gray-800 rounded-xl md:rounded-2xl bg-gray-900 text-white placeholder-gray-600 focus:ring-2 focus:ring-senju-light outline-none transition-all text-xs md:text-sm shadow-inner" />
                 </div>
                 
-                <div className="flex items-center gap-2 w-full md:w-auto">
-                  <button onClick={handleRefresh} disabled={isLoading} className="flex-1 md:flex-none p-3.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-2xl text-gray-500 transition-all flex items-center justify-center gap-2">
-                    <RefreshCw size={18} className={isLoading ? 'animate-spin text-senju-light' : ''} />
-                    <span className="md:hidden text-[10px] font-black uppercase tracking-widest">Sincronizar</span>
-                  </button>
-                </div>
+                <button onClick={handleRefresh} disabled={isLoading} className="p-2.5 md:p-3.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl md:rounded-2xl text-gray-500 transition-all flex items-center justify-center shrink-0">
+                  <RefreshCw size={18} className={isLoading ? 'animate-spin text-senju-light' : ''} />
+                </button>
               </div>
 
-              <div className="mb-4 lg:mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[10px] lg:text-xs text-gray-500 bg-gray-900/20 p-3 rounded-xl border border-gray-800/30 shrink-0">
-                <div className="flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto">
-                  <div className="relative items-per-page-dropdown">
-                    <button
-                      onClick={() => setIsItemsPerPageOpen(!isItemsPerPageOpen)}
-                      className={`flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-lg border ${isItemsPerPageOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-800'} text-gray-300 transition-all cursor-pointer font-bold hover:bg-gray-800`}
-                    >
-                      <LayoutGrid size={14} className="text-gray-600" />
-                      <span>{itemsPerPage}</span>
-                      <ChevronDown size={14} className={`text-senju-light transition-transform duration-300 ${isItemsPerPageOpen ? 'rotate-180' : ''}`} />
-                    </button>
+              <div className="mb-4 lg:mb-6 flex items-center justify-between gap-2 text-[10px] lg:text-xs text-gray-500 bg-gray-900/20 p-3 rounded-xl border border-gray-800/30 shrink-0">
+                <div className="relative items-per-page-dropdown shrink-0">
+                  <button
+                    onClick={() => setIsItemsPerPageOpen(!isItemsPerPageOpen)}
+                    className={`flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-lg border ${isItemsPerPageOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-800'} text-gray-300 transition-all cursor-pointer font-bold hover:bg-gray-800`}
+                  >
+                    <LayoutGrid size={14} className="text-gray-600" />
+                    <span className="hidden xs:inline">{itemsPerPage}</span>
+                    <ChevronDown size={14} className={`text-senju-light transition-transform duration-300 ${isItemsPerPageOpen ? 'rotate-180' : ''}`} />
+                  </button>
 
-                    {isItemsPerPageOpen && (
-                      <div className="absolute top-full left-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in duration-200 origin-top-left p-1">
-                        {[6, 12, 24, 48, 96].map(n => (
-                          <div key={n} onClick={() => { setItemsPerPage(n); setIsItemsPerPageOpen(false); }} className={`px-3 py-2 rounded-lg cursor-pointer transition-all text-[10px] font-black uppercase tracking-widest mb-0.5 last:mb-0 ${itemsPerPage === n ? 'bg-senju-dark text-senju-light' : 'text-gray-500 hover:bg-gray-800 hover:text-white'}`}>{n} {t.common.perPage}</div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <span className="font-medium tracking-tight">{t.common.total}: <strong className="text-senju-light">{filteredItems.length}</strong></span>
+                  {isItemsPerPageOpen && (
+                    <div className="absolute top-full left-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in duration-200 origin-top-left p-1">
+                      {[6, 12, 24, 48, 96].map(n => (
+                        <div key={n} onClick={() => { setItemsPerPage(n); setIsItemsPerPageOpen(false); }} className={`px-3 py-2 rounded-lg cursor-pointer transition-all text-[10px] font-black uppercase tracking-widest mb-0.5 last:mb-0 ${itemsPerPage === n ? 'bg-senju-dark text-senju-light' : 'text-gray-500 hover:bg-gray-800 hover:text-white'}`}>{n} {t.common.perPage}</div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {lastUpdated && <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-gray-600 italic font-medium"><Clock size={12} /> {t.common.lastUpdated} {new Date(lastUpdated).toLocaleTimeString()}</div>}
+
+                <div className="flex-1 flex justify-center px-2 min-w-0">
+                  <span className="font-black uppercase tracking-[0.2em] text-senju-light/80 truncate text-[9px] sm:text-[11px]">
+                    {activeTab === 'CHANNEL' ? t.menu.channels : 
+                     activeTab === 'MOVIE' ? t.menu.movies : 
+                     activeTab === 'SERIES' ? t.menu.series : 
+                     activeTab === 'FAVORITE' ? t.menu.favorites : t.menu.recent}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="font-medium tracking-tight whitespace-nowrap">{t.common.total}: <strong className="text-senju-light">{filteredItems.length}</strong></span>
+                  {lastUpdated && <div className="hidden lg:flex items-center gap-1.5 text-[10px] text-gray-600 italic font-medium"><Clock size={12} /> {new Date(lastUpdated).toLocaleTimeString()}</div>}
+                </div>
               </div>
 
               {isCurrentlyLoading ? (

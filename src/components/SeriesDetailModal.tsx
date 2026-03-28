@@ -102,7 +102,7 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
         </button>
 
         {/* Poster & Info Sidebar */}
-        <div className="w-full md:w-[300px] lg:w-[350px] bg-gray-950 flex flex-col border-b md:border-b-0 md:border-r border-gray-800 shrink-0 overflow-y-auto md:max-h-none max-h-[40vh] custom-scrollbar">
+        <div className="w-full md:w-[300px] lg:w-[350px] bg-gray-950 flex flex-col border-b md:border-b-0 md:border-r border-gray-800 shrink-0 overflow-hidden md:overflow-y-auto custom-scrollbar">
           <div className="relative aspect-video md:aspect-[2/3] w-full overflow-hidden bg-gray-900 shrink-0">
             <img 
               src={detail.info.cover || series.tvgLogo} 
@@ -113,47 +113,30 @@ export const SeriesDetailModal: React.FC<SeriesDetailModalProps> = ({ series, cr
             <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent md:hidden" />
           </div>
           
-          <div className="p-4 md:p-6 lg:p-8 space-y-4 -mt-8 md:mt-0 relative z-10">
-            <h2 className="text-xl lg:text-2xl font-bold text-white leading-tight">{detail.info.name}</h2>
+          <div className="p-4 md:p-6 lg:p-8 space-y-4 -mt-8 md:mt-0 relative z-10 shrink-0 md:shrink">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-white leading-tight truncate md:whitespace-normal">{detail.info.name}</h2>
             
             <div className="flex flex-wrap gap-1.5">
               {detail.info.rating && (
-                <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/10 text-yellow-500 rounded-lg text-[10px] font-bold border border-yellow-500/20">
+                <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-500/10 text-yellow-500 rounded-lg text-[9px] md:text-[10px] font-bold border border-yellow-500/20">
                   <Star size={10} fill="currentColor" /> {detail.info.rating}
                 </div>
               )}
               {detail.info.releaseDate && (
-                <div className="flex items-center gap-1 px-2 py-0.5 bg-senju-light/10 text-senju-light rounded-lg text-[10px] font-bold border border-senju-light/20">
+                <div className="flex items-center gap-1 px-2 py-0.5 bg-senju-light/10 text-senju-light rounded-lg text-[9px] md:text-[10px] font-bold border border-senju-light/20">
                   <Calendar size={10} /> {detail.info.releaseDate}
                 </div>
               )}
             </div>
 
-            <div className="space-y-4 pt-2">
-              <div className="space-y-1.5">
+            <div className="space-y-4 pt-1 md:pt-2">
+              <div className="space-y-1">
                 <div className="flex items-center gap-2 text-gray-500">
-                  <Info size={14} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">{t.series.synopsis}</span>
+                  <Info size={12} />
+                  <span className="text-[9px] font-bold uppercase tracking-widest">{t.series.synopsis}</span>
                 </div>
-                <p className="text-xs text-gray-400 leading-relaxed line-clamp-4 md:line-clamp-none">{detail.info.plot || t.series.noSynopsis}</p>
+                <p className="text-[11px] md:text-xs text-gray-400 leading-relaxed line-clamp-2 md:line-clamp-none italic md:not-italic">{detail.info.plot || t.series.noSynopsis}</p>
               </div>
-              
-              {(detail.info.cast || detail.info.director) && (
-                <div className="grid grid-cols-1 gap-3 pt-2 border-t border-gray-800/50">
-                  {detail.info.cast && (
-                    <div className="space-y-1">
-                      <span className="text-[9px] font-bold text-gray-600 uppercase tracking-widest block">{t.series.cast}</span>
-                      <p className="text-[10px] text-gray-500 leading-tight line-clamp-2">{detail.info.cast}</p>
-                    </div>
-                  )}
-                  {detail.info.director && (
-                    <div className="space-y-1">
-                      <span className="text-[9px] font-bold text-gray-600 uppercase tracking-widest block">{t.series.director}</span>
-                      <p className="text-[10px] text-gray-500">{detail.info.director}</p>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>
