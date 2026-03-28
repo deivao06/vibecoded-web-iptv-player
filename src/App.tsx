@@ -270,7 +270,7 @@ function App() {
               fixed lg:static inset-y-0 left-0 z-50 w-[280px] lg:w-64 bg-gray-900 border-r border-gray-800 p-4 flex flex-col gap-6 shrink-0 h-full transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none
               ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
-              <div className="flex items-center gap-3 px-2 mb-2">
+              <div className="flex lg:hidden items-center gap-3 px-2 mb-2">
                 <div className="bg-senju-dark p-1 rounded-lg">
                   <Logo size={20} />
                 </div>
