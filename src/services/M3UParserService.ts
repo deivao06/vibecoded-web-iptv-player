@@ -5,11 +5,17 @@ import type { PlaylistItem, ItemCategory } from '../types/playlist';
 export class M3UParserService {
   private static getProxyUrl(url: string): string {
     const isDev = import.meta.env.DEV;
-    const useProxyInProd = import.meta.env.VITE_USE_PROXY_IN_PROD === 'true';
+    const customProxy = import.meta.env.VITE_PROXY_URL;
 
-    if (isDev || useProxyInProd) {
+    if (isDev) {
       return `/api-proxy?url=${encodeURIComponent(url)}`;
     }
+
+    if (customProxy) {
+      // Use o proxy da Cloudflare se a variável estiver definida
+      return `${customProxy}${encodeURIComponent(url)}`;
+    }
+
     return url;
   }
 
