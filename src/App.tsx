@@ -7,6 +7,7 @@ import { VideoPlayer } from './components/VideoPlayer';
 import { SeriesDetailModal } from './components/SeriesDetailModal';
 import { SavedPlaylistsSelector } from './components/SavedPlaylistsSelector';
 import { Logo } from './components/Logo';
+import { AdBanner } from './components/AdBanner';
 import { Search, List, Film, Tv, Loader2, Link as LinkIcon, AlertCircle, User, Lock, Globe, Save, ChevronLeft, ChevronRight, RefreshCw, Clock, LayoutGrid, Heart, History, ChevronDown } from 'lucide-react';
 import type { PlaylistItem, ItemCategory } from './types/playlist';
 
@@ -217,7 +218,12 @@ function App() {
         </div>
       </header>
 
-      <div className="flex flex-1 w-full max-w-[1600px] mx-auto overflow-hidden">
+      <div className="flex flex-1 w-full max-w-[1900px] mx-auto overflow-hidden relative">
+        {/* Banner Esquerdo (Vertical) */}
+        <aside className="hidden 2xl:flex w-40 shrink-0 h-full p-2 items-start pt-4">
+          <AdBanner slot="LEFT_AD_SLOT" className="w-full h-[600px] sticky top-4" />
+        </aside>
+
         <aside className="w-64 bg-gray-900 border-r border-gray-800 p-4 hidden md:flex flex-col gap-6 shrink-0 h-full">
           <div>
             <p className="px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">{t.menu.library}</p>
@@ -370,6 +376,11 @@ function App() {
             </>
           )}
         </main>
+
+        {/* Banner Direito (Vertical) */}
+        <aside className="hidden xl:flex w-40 shrink-0 h-full p-2 items-start pt-4">
+          <AdBanner slot="RIGHT_AD_SLOT" className="w-full h-[600px] sticky top-4" />
+        </aside>
       </div>
 
       {selectedSeries && currentCredentials && (
