@@ -3,7 +3,13 @@ import type { PlaylistItem, XtreamCredentials } from '../types/playlist';
 
 export class XtreamService {
   private static getProxyUrl(url: string): string {
-    return `/api-proxy?url=${encodeURIComponent(url)}`;
+    const isDev = import.meta.env.DEV;
+    const useProxyInProd = import.meta.env.VITE_USE_PROXY_IN_PROD === 'true';
+
+    if (isDev || useProxyInProd) {
+      return `/api-proxy?url=${encodeURIComponent(url)}`;
+    }
+    return url;
   }
 
   static async loginCheck(creds: XtreamCredentials): Promise<boolean> {

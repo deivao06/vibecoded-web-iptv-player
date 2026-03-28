@@ -3,11 +3,20 @@ import { parse } from 'iptv-playlist-parser';
 import type { PlaylistItem, ItemCategory } from '../types/playlist';
 
 export class M3UParserService {
+  private static getProxyUrl(url: string): string {
+    const isDev = import.meta.env.DEV;
+    const useProxyInProd = import.meta.env.VITE_USE_PROXY_IN_PROD === 'true';
+
+    if (isDev || useProxyInProd) {
+      return `/api-proxy?url=${encodeURIComponent(url)}`;
+    }
+    return url;
+  }
+
   static async fetchAndParse(url: string): Promise<PlaylistItem[]> {
     try {
-      // O proxy local cuidará do CORS e dos Headers (Timeout 180s)
-      const proxyUrl = `/api-proxy?url=${encodeURIComponent(url)}`;
-      const response = await axios.get(proxyUrl, { timeout: 180000 });
+      // Proxy condicional (Timeout 180s)
+      const response = await axios.get(this.getProxyUrl(url), { timeout: 180000 });
       const m3uContent = response.data;
       const parsed = parse(m3uContent);
 
