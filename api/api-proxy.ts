@@ -29,26 +29,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 180000); // 3 minutes timeout
 
+    // Common browser headers to bypass simple bot detections
+    const headers: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+      'Sec-Fetch-Dest': 'empty',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Site': 'cross-site',
+    };
+
+    // Add optional credentials if it's an Xtream URL with Basic Auth (rare but possible)
+    const parsedTarget = new URL(targetUrl);
+    if (parsedTarget.username && parsedTarget.password) {
+      const auth = Buffer.from(`${parsedTarget.username}:${parsedTarget.password}`).toString('base64');
+      headers['Authorization'] = `Basic ${auth}`;
+    }
+
     const response = await fetch(targetUrl, {
       method: 'GET',
       redirect: 'follow',
       signal: controller.signal,
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/plain, application/json, */*',
-        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-      }
+      headers
     });
 
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      return res.status(response.status).send(`Target returned ${response.status}`);
-    }
-
-    // Set CORS headers
+    // Set CORS headers early
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+
+    if (!response.ok) {
+      console.error(`Proxy: Target ${targetUrl} returned status ${response.status}`);
+      // If the target returns 403, we return it but with a clear message
+      return res.status(response.status).send(`IPTV Server returned ${response.status}. This usually means the provider blocks cloud hosting IPs (Vercel).`);
+    }
     
     const contentType = response.headers.get('content-type');
     if (contentType) {
