@@ -64,13 +64,13 @@ export const PlaylistItemCard: React.FC<PlaylistItemCardProps> = ({ item, onPlay
         )}
       </div>
       
-      <div className="p-3 bg-gray-900/80 backdrop-blur-sm border-t border-gray-800">
-        <h3 className="text-sm font-bold text-gray-100 truncate leading-tight mb-1 group-hover:text-senju-light transition-colors" title={item.name}>
+      <div className="p-2 sm:p-3 bg-gray-900/80 backdrop-blur-sm border-t border-gray-800">
+        <h3 className="text-xs sm:text-sm font-bold text-gray-100 truncate leading-tight mb-1 group-hover:text-senju-light transition-colors" title={item.name}>
           {item.name}
         </h3>
         {item.groupName && (
           <div className="flex items-center gap-1.5 overflow-hidden">
-            <p className="text-[10px] text-gray-500 truncate uppercase font-medium tracking-tight">
+            <p className="text-[9px] sm:text-[10px] text-gray-500 truncate uppercase font-medium tracking-tight">
               {item.groupName}
             </p>
           </div>

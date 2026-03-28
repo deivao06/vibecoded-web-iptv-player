@@ -6,7 +6,7 @@ import type { SavedPlaylist, XtreamCredentials } from '../types/playlist';
 
 export function SavedPlaylistsSelector() {
   const { savedPlaylists, activePlaylistId, setActivePlaylist, removePlaylist } = useSavedAccountsStore();
-  const { loadPlaylist, loginXtream } = usePlaylistStore();
+  const { loadPlaylist, loginXtream, clearPlaylist } = usePlaylistStore();
   const { t } = useLanguageStore();
 
   const handleSelect = (playlist: SavedPlaylist) => {
@@ -16,6 +16,13 @@ export function SavedPlaylistsSelector() {
     } else {
       loginXtream(playlist.data as XtreamCredentials);
     }
+  };
+
+  const handleRemove = (id: string) => {
+    if (activePlaylistId === id) {
+      clearPlaylist();
+    }
+    removePlaylist(id);
   };
 
   if (savedPlaylists.length === 0) return null;
@@ -55,7 +62,7 @@ export function SavedPlaylistsSelector() {
               <button 
                 onClick={(e) => {
                   e.stopPropagation();
-                  removePlaylist(playlist.id);
+                  handleRemove(playlist.id);
                 }}
                 className="p-1.5 opacity-0 group-hover/item:opacity-100 hover:bg-red-900/30 hover:text-red-500 rounded-md transition-all"
                 title={t.playlists.remove}

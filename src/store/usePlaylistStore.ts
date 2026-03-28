@@ -32,6 +32,7 @@ interface PlaylistState {
   recordWatch: (itemId: string) => void;
   
   clearCache: () => void;
+  clearPlaylist: () => void;
 }
 
 const idbStorage: PersistStorage<PlaylistState> = {
@@ -189,6 +190,21 @@ export const usePlaylistStore = create<PlaylistState>()(
         } catch (err) {
           set((s) => ({ status: { ...s.status, [category]: { isLoading: false, error: 'Erro de Timeout/Rede' } } }));
         }
+      },
+
+      clearPlaylist: () => {
+        set({
+          items: [],
+          currentSource: null,
+          currentCredentials: null,
+          lastUpdated: null,
+          error: null,
+          status: {
+            CHANNEL: { isLoading: false, error: null },
+            MOVIE: { isLoading: false, error: null },
+            SERIES: { isLoading: false, error: null },
+          }
+        });
       },
 
       clearCache: () => set({ items: [], lastUpdated: null, currentSource: null, currentCredentials: null, favorites: [], recentlyViewed: [] })
