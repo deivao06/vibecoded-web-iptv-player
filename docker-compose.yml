@@ -1,8 +1,6 @@
 services:
   web:
-    build:
-      context: .
-      target: development
+    build: .
     container_name: iptv-player-dev
     volumes:
       - .:/app
