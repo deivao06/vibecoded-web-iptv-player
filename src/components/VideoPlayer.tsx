@@ -27,7 +27,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url: originalUrl, titl
     let hlsInstance: Hls | null = null;
     let mpegtsPlayer: mpegts.Player | null = null;
 
-    const url = getProxyUrl(originalUrl);
+    const url = getProxyUrl(originalUrl, true);
     const urlLower = originalUrl.toLowerCase();
     const isTS = urlLower.endsWith('.ts') || urlLower.includes('.ts?') || (urlLower.includes('live') && urlLower.includes('fistfast') && !urlLower.includes('.mp4') && !urlLower.includes('.mkv'));
     const isHLS = urlLower.includes('.m3u8');
@@ -114,6 +114,11 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url: originalUrl, titl
         mpegtsPlayer.detachMediaElement();
         mpegtsPlayer.destroy();
       }
+
+      // Parar o vídeo imediatamente e limpar a fonte para interromper requests pendentes
+      video.pause();
+      video.removeAttribute('src'); // Força a remoção da fonte
+      video.load(); // Força o browser a resetar o player e fechar conexões
     };
   }, [originalUrl, t.player.errorMsg]);
 

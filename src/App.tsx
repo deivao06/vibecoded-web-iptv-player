@@ -132,12 +132,22 @@ function App() {
   };
 
   const handleRefresh = () => {
+    // 1. Tenta pegar a playlist ativa do storage
     const activeId = useSavedAccountsStore.getState().activePlaylistId;
     const playlists = useSavedAccountsStore.getState().savedPlaylists;
     const active = playlists.find(p => p.id === activeId);
+
     if (active) {
       if (active.type === 'M3U') loadPlaylist(active.data as string, true);
       else loginXtream(active.data as any, true);
+      return;
+    }
+
+    // 2. Fallback: Se não houver ativa no storage, usa o que está carregado no store de playlist
+    if (currentCredentials) {
+      loginXtream(currentCredentials, true);
+    } else if (currentSource) {
+      loadPlaylist(currentSource, true);
     }
   };
 

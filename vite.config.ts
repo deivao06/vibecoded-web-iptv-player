@@ -45,11 +45,19 @@ export default defineConfig({
 
             try {
               const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 180000); // 3 minutes timeout
+              const timeoutId = setTimeout(() => {
+                try { controller.abort(); } catch (e) {}
+              }, 180000); // 3 minutes timeout
 
               req.on('close', () => {
                 clearTimeout(timeoutId);
-                controller.abort();
+                try {
+                  if (!controller.signal.aborted) {
+                    controller.abort();
+                  }
+                } catch (e) {
+                  // Ignore abort errors on close
+                }
               });
 
               const response = await fetch(targetUrl, {
@@ -83,7 +91,17 @@ export default defineConfig({
 
               if (response.body) {
                 // @ts-ignore
-                Readable.fromWeb(response.body).pipe(res);
+                const stream = Readable.fromWeb(response.body);
+                
+                // Trata erros no stream para evitar que o processo caia
+                stream.on('error', (err: any) => {
+                  if (err.code !== 'ABORT_ERR' && err.name !== 'AbortError') {
+                    console.error('Proxy Stream Error:', err.message);
+                  }
+                  if (!res.writableEnded) res.end();
+                });
+
+                stream.pipe(res);
               } else {
                 res.end();
               }
