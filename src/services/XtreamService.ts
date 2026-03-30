@@ -1,29 +1,14 @@
 import axios from 'axios';
 import type { PlaylistItem, XtreamCredentials } from '../types/playlist';
+import { getProxyUrl } from '../utils/proxy';
 
 export class XtreamService {
-  private static getProxyUrl(url: string): string {
-    const isDev = import.meta.env.DEV;
-    const customProxy = import.meta.env.VITE_PROXY_URL;
-
-    if (isDev) {
-      return `/api-proxy?url=${encodeURIComponent(url)}`;
-    }
-
-    if (customProxy) {
-      // Use o proxy da Cloudflare se a variável estiver definida
-      return `${customProxy}${encodeURIComponent(url)}`;
-    }
-
-    return url;
-  }
-
   static async loginCheck(creds: XtreamCredentials): Promise<boolean> {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}`;
     
     try {
-      const loginRes = await axios.get(this.getProxyUrl(apiBase), { timeout: 60000 });
+      const loginRes = await axios.get(getProxyUrl(apiBase), { timeout: 60000 });
       return loginRes.data?.user_info?.status === 'Active';
     } catch (error) {
       console.error('Login check failed:', error);
@@ -44,7 +29,7 @@ export class XtreamService {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}`;
     
-    const response = await axios.get(this.getProxyUrl(`${apiBase}&action=get_live_streams`), { timeout: 180000 });
+    const response = await axios.get(getProxyUrl(`${apiBase}&action=get_live_streams`), { timeout: 180000 });
     const data = this.normalizeToArray(response.data);
     
     return data.map((item: any) => ({
@@ -62,7 +47,7 @@ export class XtreamService {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}`;
     
-    const response = await axios.get(this.getProxyUrl(`${apiBase}&action=get_vod_streams`), { timeout: 180000 });
+    const response = await axios.get(getProxyUrl(`${apiBase}&action=get_vod_streams`), { timeout: 180000 });
     const data = this.normalizeToArray(response.data);
     
     return data.map((item: any) => ({
@@ -81,7 +66,7 @@ export class XtreamService {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}`;
     
-    const response = await axios.get(this.getProxyUrl(`${apiBase}&action=get_series`), { timeout: 180000 });
+    const response = await axios.get(getProxyUrl(`${apiBase}&action=get_series`), { timeout: 180000 });
     const data = this.normalizeToArray(response.data);
     
     return data.map((item: any) => ({
@@ -100,7 +85,7 @@ export class XtreamService {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}&action=get_series_info&series_id=${seriesId}`;
     
-    const response = await axios.get(this.getProxyUrl(apiBase), { timeout: 60000 });
+    const response = await axios.get(getProxyUrl(apiBase), { timeout: 60000 });
     const data = response.data;
     
     const seasonsMap: Record<number, import('../types/playlist').Episode[]> = {};

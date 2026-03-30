@@ -3,6 +3,7 @@ import { X, Loader2, AlertCircle } from 'lucide-react';
 import Hls from 'hls.js';
 import mpegts from 'mpegts.js';
 import { useLanguageStore } from '../store/useLanguageStore';
+import { getProxyUrl } from '../utils/proxy';
 
 interface VideoPlayerProps {
   url: string;
@@ -10,7 +11,7 @@ interface VideoPlayerProps {
   onClose: () => void;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose }) => {
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url: originalUrl, title, onClose }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +27,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
     let hlsInstance: Hls | null = null;
     let mpegtsPlayer: mpegts.Player | null = null;
 
-    const urlLower = url.toLowerCase();
+    const url = getProxyUrl(originalUrl);
+    const urlLower = originalUrl.toLowerCase();
     const isTS = urlLower.endsWith('.ts') || urlLower.includes('.ts?') || (urlLower.includes('live') && urlLower.includes('fistfast') && !urlLower.includes('.mp4') && !urlLower.includes('.mkv'));
     const isHLS = urlLower.includes('.m3u8');
 
@@ -113,7 +115,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
         mpegtsPlayer.destroy();
       }
     };
-  }, [url, t.player.errorMsg]);
+  }, [originalUrl, t.player.errorMsg]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm p-2 md:p-6 lg:p-12 animate-in fade-in duration-300">
@@ -163,7 +165,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
           />
         </div>
 
-        {url.toLowerCase().includes('.ts') && !loading && !error && (
+        {originalUrl.toLowerCase().includes('.ts') && !loading && !error && (
           <div className="absolute top-20 left-6 z-20 flex items-center gap-2 px-3 py-1.5 bg-red-600 rounded-lg text-[10px] font-black uppercase tracking-widest text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> {t.player.live}
           </div>

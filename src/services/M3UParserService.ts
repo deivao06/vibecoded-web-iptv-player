@@ -1,28 +1,13 @@
 import axios from 'axios';
 import { parse } from 'iptv-playlist-parser';
 import type { PlaylistItem, ItemCategory } from '../types/playlist';
+import { getProxyUrl } from '../utils/proxy';
 
 export class M3UParserService {
-  private static getProxyUrl(url: string): string {
-    const isDev = import.meta.env.DEV;
-    const customProxy = import.meta.env.VITE_PROXY_URL;
-
-    if (isDev) {
-      return `/api-proxy?url=${encodeURIComponent(url)}`;
-    }
-
-    if (customProxy) {
-      // Use o proxy da Cloudflare se a variável estiver definida
-      return `${customProxy}${encodeURIComponent(url)}`;
-    }
-
-    return url;
-  }
-
   static async fetchAndParse(url: string): Promise<PlaylistItem[]> {
     try {
       // Proxy condicional (Timeout 180s)
-      const response = await axios.get(this.getProxyUrl(url), { timeout: 180000 });
+      const response = await axios.get(getProxyUrl(url), { timeout: 180000 });
       const m3uContent = response.data;
       const parsed = parse(m3uContent);
 
