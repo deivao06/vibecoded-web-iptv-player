@@ -27,14 +27,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
     let mpegtsPlayer: mpegts.Player | null = null;
 
     const urlLower = url.toLowerCase();
-    
-    // Proxy para evitar mixed content (HTTP sendo forçado para HTTPS pelo navegador) e CORS
-    // Na Vercel, isso será direcionado para /api/proxy.ts via vercel.json
-    // Em Dev, o Vite continuará usando o proxy configurado no vite.config.ts
-    const videoUrl = url.startsWith('http://') 
-      ? `/api-proxy?url=${encodeURIComponent(url)}` 
-      : url;
-
     const isTS = urlLower.endsWith('.ts') || urlLower.includes('.ts?') || (urlLower.includes('live') && urlLower.includes('fistfast') && !urlLower.includes('.mp4') && !urlLower.includes('.mkv'));
     const isHLS = urlLower.includes('.m3u8');
 
@@ -43,7 +35,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
         mpegtsPlayer = mpegts.createPlayer({
           type: 'mse',
           isLive: true,
-          url: videoUrl,
+          url: url,
           cors: true
         }, {
           enableWorker: true,
@@ -63,7 +55,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
               playResult.catch((e: any) => {
                 if (e.name !== 'AbortError') {
                   console.warn('Falha ao iniciar mpegts, tentando nativo:', e);
-                  video.src = videoUrl;
+                  video.src = url;
                 }
               });
             }
@@ -74,29 +66,29 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url, title, onClose })
           console.error('Erro mpegts:', type, detail);
           // @ts-ignore
           if (detail === mpegts.ErrorDetails.FORMAT_UNSUPPORTED || detail === 'FORMAT_UNSUPPORTED') {
-            if (video) video.src = videoUrl;
+            if (video) video.src = url;
           } else if (video && !video.src) {
-            video.src = videoUrl;
+            video.src = url;
           }
         });
 
       } catch (e) {
         console.error('Falha ao criar mpegts:', e);
-        video.src = videoUrl;
+        video.src = url;
       }
     } else if (isHLS) {
       if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoUrl;
+        video.src = url;
       } else if (Hls.isSupported()) {
         hlsInstance = new Hls();
-        hlsInstance.loadSource(videoUrl);
+        hlsInstance.loadSource(url);
         hlsInstance.attachMedia(video);
         hlsInstance.on(Hls.Events.ERROR, (_, data) => {
           if (data.fatal) setError('Erro fatal ao carregar o stream HLS.');
         });
       }
     } else {
-      video.src = videoUrl;
+      video.src = url;
     }
 
     const handleCanPlay = () => setLoading(false);
