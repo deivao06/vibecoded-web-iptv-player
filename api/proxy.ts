@@ -8,35 +8,66 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      },
-    });
+    const targetUrl = new URL(url);
+    
+    // Headers para simular um navegador real e evitar 403 de CDNs
+    const headers: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+      'Connection': 'keep-alive',
+      'Referer': targetUrl.origin + '/',
+      'Origin': targetUrl.origin,
+    };
 
-    if (!response.ok) {
-      return res.status(response.status).send(`Target returned ${response.status}`);
+    // Se o cliente (browser) enviou Range, nós repassamos para o servidor de IPTV (importante para seek de vídeo)
+    if (req.headers.range) {
+      headers['Range'] = req.headers.range as string;
     }
 
-    // Repassa os headers importantes (ContentType, Range, etc)
-    const contentType = response.headers.get('content-type');
-    if (contentType) res.setHeader('Content-Type', contentType);
-    
-    const acceptRanges = response.headers.get('accept-ranges');
-    if (acceptRanges) res.setHeader('Accept-Ranges', acceptRanges);
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: headers,
+      redirect: 'follow',
+    });
 
-    const contentLength = response.headers.get('content-length');
-    if (contentLength) res.setHeader('Content-Length', contentLength);
+    // Se o servidor retornar 403 ou erro, logamos para debug
+    if (!response.ok) {
+      console.error(`Proxy Error: Server returned ${response.status} for ${url}`);
+      return res.status(response.status).send(`Target server returned ${response.status}`);
+    }
 
-    // Configura CORS para o seu próprio domínio
+    // Repassa os headers críticos de conteúdo e streaming
+    const forwardHeaders = [
+      'content-type',
+      'content-length',
+      'content-range',
+      'accept-ranges',
+      'cache-control',
+      'expires'
+    ];
+
+    forwardHeaders.forEach(h => {
+      const value = response.headers.get(h);
+      if (value) res.setHeader(h, value);
+    });
+
+    // CORS - Permitir que o seu app web leia o stream
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Range, Content-Type');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Range, Content-Length, Accept-Ranges');
+
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
 
     if (!response.body) {
       return res.end();
     }
 
-    // @ts-ignore - Faz o stream direto dos dados do vídeo
+    // Pipeline de stream para a resposta da Vercel
+    // @ts-ignore
     const reader = response.body.getReader();
     
     while (true) {
@@ -47,7 +78,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     res.end();
   } catch (error: any) {
-    console.error('Vercel Proxy Error:', error);
-    res.status(500).send('Proxy Error: ' + error.message);
+    console.error('Vercel Proxy Critical Error:', error);
+    if (!res.headersSent) {
+      res.status(500).send('Proxy Critical Error: ' + error.message);
+    }
   }
 }
