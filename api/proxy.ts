@@ -23,18 +23,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const response = await fetch(targetUrl, {
+      method: 'GET',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': '*/*',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'cross-site',
       }
     });
 
-    // Repassar Headers de CORS
+    // Repassar Headers de CORS e permitir tudo para o browser
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    
-    const contentType = response.headers.get('content-type');
-    if (contentType) {
-      res.setHeader('Content-Type', contentType);
+    res.setHeader('Access-Control-Allow-Headers', '*');
+
+    if (!response.ok) {
+      console.error(`Proxy: Target ${targetUrl} returned status ${response.status}`);
+      // Se o alvo retornar 403, repassamos mas com uma mensagem clara para debug
+      return res.status(response.status).send(`IPTV Server returned ${response.status}. This usually means the provider blocks cloud hosting IPs (Vercel).`);
     }
 
     // Nota: Para vídeos grandes, isso pode falhar na Vercel devido ao limite de payload/timeout.
