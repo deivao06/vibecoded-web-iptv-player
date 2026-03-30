@@ -3,7 +3,19 @@ import type { PlaylistItem, XtreamCredentials } from '../types/playlist';
 
 export class XtreamService {
   private static getProxyUrl(url: string): string {
-    return `/api-proxy?url=${encodeURIComponent(url)}`;
+    const isDev = import.meta.env.DEV;
+    const customProxy = import.meta.env.VITE_PROXY_URL;
+
+    if (isDev) {
+      return `/api-proxy?url=${encodeURIComponent(url)}`;
+    }
+
+    if (customProxy) {
+      // Use o proxy da Cloudflare se a variável estiver definida
+      return `${customProxy}${encodeURIComponent(url)}`;
+    }
+
+    return url;
   }
 
   static async loginCheck(creds: XtreamCredentials): Promise<boolean> {
