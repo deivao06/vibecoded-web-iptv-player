@@ -2,11 +2,41 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { Readable } from 'stream';
+import os from 'os';
 
 export default defineConfig({
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+  },
   plugins: [
     react(),
     tailwindcss(),
+    {
+      name: 'network-logger',
+      configureServer(server) {
+        server.httpServer?.once('listening', () => {
+          const interfaces = os.networkInterfaces();
+          const addresses: string[] = [];
+          
+          Object.values(interfaces).forEach((iface) => {
+            iface?.forEach((details) => {
+              if (details.family === 'IPv4' && !details.internal) {
+                addresses.push(`http://${details.address}:5173`);
+              }
+            });
+          });
+
+          console.log('\n  \x1b[32m➜\x1b[0m  \x1b[1mSenju Player (Self-Hosted)\x1b[0m');
+          console.log('  \x1b[32m➜\x1b[0m  Access from your mobile using:');
+          addresses.forEach(addr => {
+            console.log(`  \x1b[32m➜\x1b[0m  \x1b[36m${addr}\x1b[0m`);
+          });
+          console.log('\n');
+        });
+      }
+    },
     {
       name: 'm3u-proxy',
       configureServer(server) {
