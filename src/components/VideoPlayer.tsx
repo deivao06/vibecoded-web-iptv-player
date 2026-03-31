@@ -140,7 +140,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ url: originalUrl, titl
         <div className="flex-1 bg-black flex items-center justify-center relative overflow-hidden">
           {loading && !error && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-950">
-              <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+              <Loader2 className="w-12 h-12 text-senju-light animate-spin mb-4" />
               <p className="text-gray-400 font-medium animate-pulse">{t.player.syncing}</p>
             </div>
           )}
