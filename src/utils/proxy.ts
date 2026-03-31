@@ -1,25 +1,17 @@
-export const getProxyUrl = (url: string, isVideo: boolean = false): string => {
+export const getProxyUrl = (url: string, _isVideo: boolean = false): string => {
   if (!url) return url;
   
   // Se já estiver usando o proxy, não faz nada
-  if (url.startsWith('/api-proxy') || url.startsWith('http') && url.includes('/api-proxy')) {
+  if (url.startsWith('/api-proxy') || (url.startsWith('http') && url.includes('/api-proxy'))) {
     return url;
   }
 
+  // Se houver um proxy customizado via variável de ambiente, usamos ele
   const customProxy = import.meta.env.VITE_PROXY_URL;
-  const isDev = import.meta.env.DEV;
-  
-  // Se for vídeo EM PRODUÇÃO, forçamos o proxy da Vercel (/api-proxy)
-  // Se for vídeo em DESENVOLVIMENTO, o Vite já cuida do /api-proxy
-  if (isVideo) {
-    return `/api-proxy?url=${encodeURIComponent(url)}`;
-  }
-
-  // Para requisições de DADOS (listas) em produção:
-  if (!isDev && customProxy) {
+  if (customProxy) {
     return `${customProxy}${encodeURIComponent(url)}`;
   }
 
-  // Padrão para desenvolvimento ou se não houver proxy customizado
+  // Padrão para self-hosted: usar o endpoint local configurado no servidor (Vite ou Node)
   return `/api-proxy?url=${encodeURIComponent(url)}`;
 };

@@ -7,7 +7,7 @@ import { VideoPlayer } from './components/VideoPlayer';
 import { SeriesDetailModal } from './components/SeriesDetailModal';
 import { SavedPlaylistsSelector } from './components/SavedPlaylistsSelector';
 import { Logo } from './components/Logo';
-import { AdBanner } from './components/AdBanner';
+
 import { Search, List, Film, Tv, Loader2, Link as LinkIcon, AlertCircle, User, Lock, Globe, Save, ChevronLeft, ChevronRight, RefreshCw, Clock, LayoutGrid, Heart, History, ChevronDown, Menu, X, Plus } from 'lucide-react';
 import type { PlaylistItem, ItemCategory } from './types/playlist';
 
@@ -258,12 +258,6 @@ function App() {
       </header>
 
       <div className="flex flex-1 w-full max-w-[1900px] mx-auto overflow-hidden relative">
-        {/* Banner Esquerdo (Vertical) */}
-        {currentSource && (
-          <aside className="hidden 2xl:flex w-40 shrink-0 h-full p-2 items-start pt-4">
-            <AdBanner slot="LEFT_AD_SLOT" className="w-full h-[600px] sticky top-4" />
-          </aside>
-        )}
 
         {/* Sidebar: Desktop Sidebar & Mobile Drawer */}
         {currentSource && (
@@ -451,12 +445,6 @@ function App() {
           )}
         </main>
 
-        {/* Banner Direito (Vertical) */}
-        {currentSource && (
-          <aside className="hidden xl:flex w-40 shrink-0 h-full p-2 items-start pt-4">
-            <AdBanner slot="RIGHT_AD_SLOT" className="w-full h-[600px] sticky top-4" />
-          </aside>
-        )}
       </div>
 
       {selectedSeries && currentCredentials && (
