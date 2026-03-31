@@ -16,7 +16,7 @@ type ViewCategory = ItemCategory | 'FAVORITE' | 'RECENT';
 
 function App() {
   const { 
-    items, isLoading, error, loadPlaylist, loginXtream, fetchCategory, 
+    items, isLoading, error, loadPlaylist, loginXtream, 
     lastUpdated, status, currentSource, currentCredentials,
     favorites, recentlyViewed, recordWatch
   } = usePlaylistStore();
@@ -62,27 +62,17 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isItemsPerPageOpen, isGroupFilterOpen, isLangOpen]);
 
-  // ... (keep the existing login and refresh effects)
-
-  // Calculate unique groups for the current category
-  const availableGroups = useMemo(() => {
-    if (!items || !['CHANNEL', 'MOVIE', 'SERIES'].includes(activeTab)) return [];
-    
-    const groups = new Set<string>();
-    items.forEach(item => {
-      if (item.category === activeTab && item.groupName) {
-        groups.add(item.groupName);
-      }
-    });
-    
-    return Array.from(groups).sort((a, b) => a.localeCompare(b));
-  }, [items, activeTab]);
-
-  // Reset group and page when tab changes
   useEffect(() => {
-    setSelectedGroup('ALL');
-    setCurrentPage(1);
-  }, [activeTab]);
+    const activeId = useSavedAccountsStore.getState().activePlaylistId;
+    const playlists = useSavedAccountsStore.getState().savedPlaylists;
+    if (activeId && playlists.length > 0) {
+      const active = playlists.find(p => p.id === activeId);
+      if (active) {
+        if (active.type === 'M3U') loadPlaylist(active.data as string);
+        else loginXtream(active.data as any);
+      }
+    }
+  }, [loadPlaylist, loginXtream]);
 
   // Calculate unique groups for the current category
   const availableGroups = useMemo(() => {

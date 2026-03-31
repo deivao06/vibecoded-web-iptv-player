@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    container_name: iptv-player-dev
+    container_name: senju-player
     volumes:
       - .:/app
       - /app/node_modules
