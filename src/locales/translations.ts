@@ -21,6 +21,7 @@ export const translations = {
       connectToStart: 'Conecte-se para começar',
       chooseMethod: 'Escolha o método acima e insira suas credenciais.',
       version: 'Senju Player v1.0',
+      all: 'Todos',
       footer: 'Senju Player — M3U & Xtream Codes API'
     },
     menu: {
@@ -81,6 +82,7 @@ export const translations = {
       connectToStart: 'Connect to start',
       chooseMethod: 'Choose the method above and enter your credentials.',
       version: 'Senju Player v1.0',
+      all: 'All',
       footer: 'Senju Player — M3U & Xtream Codes API'
     },
     menu: {

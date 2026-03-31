@@ -25,11 +25,36 @@ export class XtreamService {
     return [];
   }
 
+  static async fetchCategories(creds: XtreamCredentials, type: 'live' | 'vod' | 'series'): Promise<Record<string, string>> {
+    const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
+    const action = type === 'live' ? 'get_live_categories' : type === 'vod' ? 'get_vod_categories' : 'get_series_categories';
+    const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}&action=${action}`;
+    
+    try {
+      const response = await axios.get(getProxyUrl(apiBase), { timeout: 30000 });
+      const data = this.normalizeToArray(response.data);
+      const map: Record<string, string> = {};
+      data.forEach((cat: any) => {
+        if (cat.category_id && cat.category_name) {
+          map[cat.category_id.toString()] = cat.category_name;
+        }
+      });
+      return map;
+    } catch (e) {
+      console.error(`Failed to fetch ${type} categories`, e);
+      return {};
+    }
+  }
+
   static async fetchChannels(creds: XtreamCredentials): Promise<PlaylistItem[]> {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}`;
     
-    const response = await axios.get(getProxyUrl(`${apiBase}&action=get_live_streams`), { timeout: 180000 });
+    const [response, categories] = await Promise.all([
+      axios.get(getProxyUrl(`${apiBase}&action=get_live_streams`), { timeout: 180000 }),
+      this.fetchCategories(creds, 'live')
+    ]);
+    
     const data = this.normalizeToArray(response.data);
     
     return data.map((item: any) => ({
@@ -38,7 +63,7 @@ export class XtreamService {
       url: `${baseUrl}/live/${creds.username}/${creds.password}/${item.stream_id}.ts`,
       category: 'CHANNEL',
       tvgLogo: item.stream_icon,
-      groupName: item.category_name,
+      groupName: item.category_name || categories[item.category_id?.toString()] || 'Outros',
       streamId: item.stream_id
     }));
   }
@@ -47,7 +72,11 @@ export class XtreamService {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}`;
     
-    const response = await axios.get(getProxyUrl(`${apiBase}&action=get_vod_streams`), { timeout: 180000 });
+    const [response, categories] = await Promise.all([
+      axios.get(getProxyUrl(`${apiBase}&action=get_vod_streams`), { timeout: 180000 }),
+      this.fetchCategories(creds, 'vod')
+    ]);
+    
     const data = this.normalizeToArray(response.data);
     
     return data.map((item: any) => ({
@@ -56,7 +85,7 @@ export class XtreamService {
       url: `${baseUrl}/movie/${creds.username}/${creds.password}/${item.stream_id}.${item.container_extension || 'mp4'}`,
       category: 'MOVIE',
       tvgLogo: item.stream_icon,
-      groupName: item.category_name,
+      groupName: item.category_name || categories[item.category_id?.toString()] || 'Outros',
       streamId: item.stream_id,
       containerExtension: item.container_extension
     }));
@@ -66,7 +95,11 @@ export class XtreamService {
     const baseUrl = creds.url.endsWith('/') ? creds.url.slice(0, -1) : creds.url;
     const apiBase = `${baseUrl}/player_api.php?username=${creds.username}&password=${creds.password}`;
     
-    const response = await axios.get(getProxyUrl(`${apiBase}&action=get_series`), { timeout: 180000 });
+    const [response, categories] = await Promise.all([
+      axios.get(getProxyUrl(`${apiBase}&action=get_series`), { timeout: 180000 }),
+      this.fetchCategories(creds, 'series')
+    ]);
+    
     const data = this.normalizeToArray(response.data);
     
     return data.map((item: any) => ({
@@ -75,7 +108,7 @@ export class XtreamService {
       url: `${baseUrl}/series/${creds.username}/${creds.password}/${item.series_id}`,
       category: 'SERIES',
       tvgLogo: item.cover,
-      groupName: item.category_name,
+      groupName: item.category_name || categories[item.category_id?.toString()] || 'Outros',
       streamId: item.series_id,
       seriesId: item.series_id
     }));

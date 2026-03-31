@@ -32,6 +32,7 @@ function App() {
   const [listName, setListName] = useState('');
 
   const [activeTab, setActiveTab] = useState<ViewCategory>('CHANNEL');
+  const [selectedGroup, setSelectedGroup] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [playingItem, setPlayingItem] = useState<{ url: string; name: string } | null>(null);
   const [selectedSeries, setSelectedSeries] = useState<PlaylistItem | null>(null);
@@ -39,6 +40,7 @@ function App() {
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [currentPage, setCurrentPage] = useState(1);
   const [isItemsPerPageOpen, setIsItemsPerPageOpen] = useState(false);
+  const [isGroupFilterOpen, setIsGroupFilterOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoginVisible, setIsLoginVisible] = useState(false);
@@ -49,13 +51,16 @@ function App() {
       if (isItemsPerPageOpen && !(event.target as Element).closest('.items-per-page-dropdown')) {
         setIsItemsPerPageOpen(false);
       }
+      if (isGroupFilterOpen && !(event.target as Element).closest('.group-filter-dropdown')) {
+        setIsGroupFilterOpen(false);
+      }
       if (isLangOpen && !(event.target as Element).closest('.lang-dropdown')) {
         setIsLangOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isItemsPerPageOpen, isLangOpen]);
+  }, [isItemsPerPageOpen, isGroupFilterOpen, isLangOpen]);
 
   useEffect(() => {
     const activeId = useSavedAccountsStore.getState().activePlaylistId;
@@ -75,6 +80,26 @@ function App() {
     }
   }, [activeTab, currentCredentials, fetchCategory]);
 
+  // Calculate unique groups for the current category
+  const availableGroups = useMemo(() => {
+    if (!items || !['CHANNEL', 'MOVIE', 'SERIES'].includes(activeTab)) return [];
+    
+    const groups = new Set<string>();
+    items.forEach(item => {
+      if (item.category === activeTab && item.groupName) {
+        groups.add(item.groupName);
+      }
+    });
+    
+    return Array.from(groups).sort((a, b) => a.localeCompare(b));
+  }, [items, activeTab]);
+
+  // Reset group and page when tab changes
+  useEffect(() => {
+    setSelectedGroup('ALL');
+    setCurrentPage(1);
+  }, [activeTab]);
+
   const filteredItems = useMemo(() => {
     if (!items) return [];
     
@@ -88,6 +113,9 @@ function App() {
         .filter((i): i is PlaylistItem => !!i);
     } else {
       baseItems = items.filter(item => item.category === activeTab);
+      if (selectedGroup !== 'ALL') {
+        baseItems = baseItems.filter(item => item.groupName === selectedGroup);
+      }
     }
     
     if (!searchQuery.trim()) return baseItems;
@@ -97,7 +125,7 @@ function App() {
       item.name.toLowerCase().includes(query) ||
       item.groupName?.toLowerCase().includes(query)
     );
-  }, [items, activeTab, searchQuery, favorites, recentlyViewed]);
+  }, [items, activeTab, selectedGroup, searchQuery, favorites, recentlyViewed]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -366,30 +394,68 @@ function App() {
                 </button>
               </div>
 
-              <div className="mb-4 lg:mb-6 flex items-center justify-between gap-2 text-[10px] lg:text-xs text-gray-500 bg-gray-900/20 p-3 rounded-xl border border-gray-800/30 shrink-0">
-                <div className="relative items-per-page-dropdown shrink-0">
-                  <button
-                    onClick={() => setIsItemsPerPageOpen(!isItemsPerPageOpen)}
-                    className={`flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-lg border ${isItemsPerPageOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-800'} text-gray-300 transition-all cursor-pointer font-bold hover:bg-gray-800`}
-                  >
-                    <LayoutGrid size={14} className="text-gray-600" />
-                    <span className="text-[10px] sm:text-xs">
-                      {itemsPerPage} 
-                      <span className="hidden sm:inline ml-1">{t.common.perPage}</span>
-                    </span>
-                    <ChevronDown size={14} className={`text-senju-light transition-transform duration-300 ${isItemsPerPageOpen ? 'rotate-180' : ''}`} />
-                  </button>
+              <div className="mb-4 lg:mb-6 flex flex-wrap items-center justify-between gap-3 text-[10px] lg:text-xs text-gray-500 bg-gray-900/20 p-3 rounded-xl border border-gray-800/30 shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="relative items-per-page-dropdown shrink-0">
+                    <button
+                      onClick={() => setIsItemsPerPageOpen(!isItemsPerPageOpen)}
+                      className={`flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-lg border ${isItemsPerPageOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-800'} text-gray-300 transition-all cursor-pointer font-bold hover:bg-gray-800`}
+                    >
+                      <LayoutGrid size={14} className="text-gray-600" />
+                      <span className="text-[10px] sm:text-xs">
+                        {itemsPerPage} 
+                        <span className="hidden sm:inline ml-1">{t.common.perPage}</span>
+                      </span>
+                      <ChevronDown size={14} className={`text-senju-light transition-transform duration-300 ${isItemsPerPageOpen ? 'rotate-180' : ''}`} />
+                    </button>
 
-                  {isItemsPerPageOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in duration-200 origin-top-left p-1">
-                      {[6, 12, 24, 48, 96].map(n => (
-                        <div key={n} onClick={() => { setItemsPerPage(n); setIsItemsPerPageOpen(false); }} className={`px-3 py-2 rounded-lg cursor-pointer transition-all text-[10px] font-black uppercase tracking-widest mb-0.5 last:mb-0 ${itemsPerPage === n ? 'bg-senju-dark text-senju-light' : 'text-gray-500 hover:bg-gray-800 hover:text-white'}`}>{n} {t.common.perPage}</div>
-                      ))}
+                    {isItemsPerPageOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-40 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in duration-200 origin-top-left p-1">
+                        {[6, 12, 24, 48, 96].map(n => (
+                          <div key={n} onClick={() => { setItemsPerPage(n); setIsItemsPerPageOpen(false); }} className={`px-3 py-2 rounded-lg cursor-pointer transition-all text-[10px] font-black uppercase tracking-widest mb-0.5 last:mb-0 ${itemsPerPage === n ? 'bg-senju-dark text-senju-light' : 'text-gray-500 hover:bg-gray-800 hover:text-white'}`}>{n} {t.common.perPage}</div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Group Filter Dropdown */}
+                  {availableGroups.length > 0 && (
+                    <div className="relative group-filter-dropdown shrink-0">
+                      <button
+                        onClick={() => setIsGroupFilterOpen(!isGroupFilterOpen)}
+                        className={`flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-lg border ${isGroupFilterOpen ? 'border-senju-light ring-2 ring-senju-light/20' : 'border-gray-800'} text-gray-300 transition-all cursor-pointer font-bold hover:bg-gray-800 max-w-[150px] sm:max-w-[200px]`}
+                      >
+                        <List size={14} className="text-gray-600 shrink-0" />
+                        <span className="text-[10px] sm:text-xs truncate">
+                          {selectedGroup === 'ALL' ? (activeTab === 'CHANNEL' ? t.menu.channels : activeTab === 'MOVIE' ? t.menu.movies : t.menu.series) : selectedGroup}
+                        </span>
+                        <ChevronDown size={14} className={`text-senju-light transition-transform duration-300 shrink-0 ${isGroupFilterOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {isGroupFilterOpen && (
+                        <div className="absolute top-full left-0 mt-2 w-64 bg-gray-900 border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in duration-200 origin-top-left p-1 max-h-80 overflow-y-auto custom-scrollbar">
+                          <div 
+                            onClick={() => { setSelectedGroup('ALL'); setIsGroupFilterOpen(false); }} 
+                            className={`px-3 py-2 rounded-lg cursor-pointer transition-all text-[10px] font-black uppercase tracking-widest mb-0.5 ${selectedGroup === 'ALL' ? 'bg-senju-dark text-senju-light' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
+                          >
+                            {t.common.all || 'Todos'}
+                          </div>
+                          {availableGroups.map(group => (
+                            <div 
+                              key={group} 
+                              onClick={() => { setSelectedGroup(group); setIsGroupFilterOpen(false); }} 
+                              className={`px-3 py-2 rounded-lg cursor-pointer transition-all text-[10px] font-black uppercase tracking-widest mb-0.5 last:mb-0 ${selectedGroup === group ? 'bg-senju-dark text-senju-light' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
+                            >
+                              {group}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
 
-                <div className="flex-1 flex justify-center px-2 min-w-0">
+                <div className="flex-1 hidden sm:flex justify-center px-2 min-w-0">
                   <span className="font-black uppercase tracking-[0.2em] text-senju-light/80 truncate text-[9px] sm:text-[11px]">
                     {activeTab === 'CHANNEL' ? t.menu.channels : 
                      activeTab === 'MOVIE' ? t.menu.movies : 
