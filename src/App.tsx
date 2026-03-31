@@ -7,7 +7,7 @@ import { VideoPlayer } from './components/VideoPlayer';
 import { SeriesDetailModal } from './components/SeriesDetailModal';
 import { SavedPlaylistsSelector } from './components/SavedPlaylistsSelector';
 import { Logo } from './components/Logo';
-import { AdBanner } from './components/AdBanner';
+
 import { Search, List, Film, Tv, Loader2, Link as LinkIcon, AlertCircle, User, Lock, Globe, Save, ChevronLeft, ChevronRight, RefreshCw, Clock, LayoutGrid, Heart, History, ChevronDown, Menu, X, Plus } from 'lucide-react';
 import type { PlaylistItem, ItemCategory } from './types/playlist';
 
@@ -62,23 +62,27 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isItemsPerPageOpen, isGroupFilterOpen, isLangOpen]);
 
-  useEffect(() => {
-    const activeId = useSavedAccountsStore.getState().activePlaylistId;
-    const playlists = useSavedAccountsStore.getState().savedPlaylists;
-    if (activeId && playlists.length > 0) {
-      const active = playlists.find(p => p.id === activeId);
-      if (active) {
-        if (active.type === 'M3U') loadPlaylist(active.data as string);
-        else loginXtream(active.data as any);
-      }
-    }
-  }, [loadPlaylist, loginXtream]);
+  // ... (keep the existing login and refresh effects)
 
+  // Calculate unique groups for the current category
+  const availableGroups = useMemo(() => {
+    if (!items || !['CHANNEL', 'MOVIE', 'SERIES'].includes(activeTab)) return [];
+    
+    const groups = new Set<string>();
+    items.forEach(item => {
+      if (item.category === activeTab && item.groupName) {
+        groups.add(item.groupName);
+      }
+    });
+    
+    return Array.from(groups).sort((a, b) => a.localeCompare(b));
+  }, [items, activeTab]);
+
+  // Reset group and page when tab changes
   useEffect(() => {
-    if (currentCredentials && ['CHANNEL', 'MOVIE', 'SERIES'].includes(activeTab)) {
-      fetchCategory(activeTab as ItemCategory);
-    }
-  }, [activeTab, currentCredentials, fetchCategory]);
+    setSelectedGroup('ALL');
+    setCurrentPage(1);
+  }, [activeTab]);
 
   // Calculate unique groups for the current category
   const availableGroups = useMemo(() => {
@@ -286,12 +290,6 @@ function App() {
       </header>
 
       <div className="flex flex-1 w-full max-w-[1900px] mx-auto overflow-hidden relative">
-        {/* Banner Esquerdo (Vertical) */}
-        {currentSource && (
-          <aside className="hidden 2xl:flex w-40 shrink-0 h-full p-2 items-start pt-4">
-            <AdBanner slot="LEFT_AD_SLOT" className="w-full h-[600px] sticky top-4" />
-          </aside>
-        )}
 
         {/* Sidebar: Desktop Sidebar & Mobile Drawer */}
         {currentSource && (
@@ -517,12 +515,6 @@ function App() {
           )}
         </main>
 
-        {/* Banner Direito (Vertical) */}
-        {currentSource && (
-          <aside className="hidden xl:flex w-40 shrink-0 h-full p-2 items-start pt-4">
-            <AdBanner slot="RIGHT_AD_SLOT" className="w-full h-[600px] sticky top-4" />
-          </aside>
-        )}
       </div>
 
       {selectedSeries && currentCredentials && (
