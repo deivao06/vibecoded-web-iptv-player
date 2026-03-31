@@ -22,20 +22,17 @@ export default defineConfig({
             }
 
             try {
+              console.log(`[Proxy] Requesting: ${targetUrl}`);
               const controller = new AbortController();
               const timeoutId = setTimeout(() => {
                 try { controller.abort(); } catch (e) {}
-              }, 180000); // 3 minutes timeout
+              }, 30000); // Reduzido para 30s para falhar mais rápido se houver problema
 
               req.on('close', () => {
                 clearTimeout(timeoutId);
                 try {
-                  if (!controller.signal.aborted) {
-                    controller.abort();
-                  }
-                } catch (e) {
-                  // Ignore abort errors
-                }
+                  if (!controller.signal.aborted) controller.abort();
+                } catch (e) {}
               });
 
               const response = await fetch(targetUrl, {
@@ -44,14 +41,14 @@ export default defineConfig({
                 signal: controller.signal,
                 headers: {
                   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                  'Accept': 'text/plain, application/json, */*',
-                  'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                  'Accept': '*/*',
                 }
               });
 
               clearTimeout(timeoutId);
 
               if (!response.ok) {
+                console.error(`[Proxy] Target returned ${response.status} for ${targetUrl}`);
                 res.statusCode = response.status;
                 res.end(`Target returned ${response.status}`);
                 return;
@@ -69,7 +66,8 @@ export default defineConfig({
               if (response.body) {
                 // @ts-ignore
                 const stream = Readable.fromWeb(response.body);
-                stream.on('error', () => {
+                stream.on('error', (err) => {
+                  console.error('[Proxy] Stream Error:', err.message);
                   if (!res.writableEnded) res.end();
                 });
                 stream.pipe(res);
@@ -78,6 +76,7 @@ export default defineConfig({
               }
               return;
             } catch (err: any) {
+              console.error('[Proxy] Critical Error:', err.message);
               if (err.name === 'AbortError') {
                  res.statusCode = 504;
                  res.end('Proxy Timeout');

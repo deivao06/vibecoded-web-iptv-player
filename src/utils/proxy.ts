@@ -1,8 +1,8 @@
 export const getProxyUrl = (url: string, _isVideo: boolean = false): string => {
   if (!url) return url;
   
-  // Se já estiver usando o proxy, não faz nada
-  if (url.startsWith('/api-proxy') || (url.startsWith('http') && url.includes('/api-proxy'))) {
+  // Se já for uma URL absoluta do proxy, não faz nada
+  if (url.startsWith('http') && url.includes('/api-proxy')) {
     return url;
   }
 
@@ -12,6 +12,9 @@ export const getProxyUrl = (url: string, _isVideo: boolean = false): string => {
     return `${customProxy}${encodeURIComponent(url)}`;
   }
 
-  // Padrão para self-hosted: usar o endpoint local configurado no servidor (Vite ou Node)
-  return `/api-proxy?url=${encodeURIComponent(url)}`;
+  // Padrão para self-hosted: usar o endpoint local.
+  // IMPORTANTE: Usamos window.location.origin para garantir que a URL seja ABSOLUTA.
+  // Isso evita erros em Web Workers (usados pelo mpegts.js) que não resolvem caminhos relativos.
+  const base = typeof window !== 'undefined' ? window.location.origin : '';
+  return `${base}/api-proxy?url=${encodeURIComponent(url)}`;
 };
